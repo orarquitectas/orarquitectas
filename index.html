@@ -575,7 +575,14 @@ body::before{content:'';position:fixed;inset:0;background:var(--body-grad,linear
       <input type="file" id="j-img-input" accept="image/*" multiple style="display:none" onchange="addJuntaImgs(this)">
       <div id="j-img-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
     </div>
-    <div class="form-row"><label class="form-label">Link de archivo (PDF, Drive, etc.)</label><input class="form-input" id="j-link" placeholder="https://drive.google.com/..."></div>
+    <div class="form-row"><label class="form-label">Proyecto</label><select class="form-select" id="j-proj">
+      <option value="monti">Monti</option>
+      <option value="skyline">Skyline</option>
+      <option value="showroom">Showroom</option>
+      <option value="moti">Moti</option>
+      <option value="tlanepantla">Tlanepantla</option>
+      <option value="general">General</option>
+    </select></div>
     <div class="form-btns"><button class="fbtn" onclick="cm('junta')">Cancelar</button><button class="fbtn primary" onclick="saveJunta()">Guardar</button></div>
   </div>
 </div>
@@ -670,7 +677,7 @@ const FB='https://orarquitectas-default-rtdb.firebaseio.com';
 
 async function saveToSheet(profile,key,value){
   try{
-    await fetch(FB+'/or/'+profile+'/'+key+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(value===undefined?null:value)});
+    await fetch(FB+'/or/'+profile+'/'+key+'.json',{method:'PUT',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(value===undefined?null:value)});
     ss('ok');
   }catch(e){ss('err');}
 }
@@ -763,7 +770,7 @@ function oc(e,t){if(e.target===e.currentTarget)cm(t);}
 function cm(t){document.getElementById(`overlay-${t}`).style.display='none';}
 function openModal(type){
   document.getElementById(`overlay-${type}`).style.display='flex';
-  if(type==='junta'){document.getElementById('j-quien').value='';document.getElementById('j-notas').value='';document.getElementById('j-fecha').value=new Date().toISOString().split('T')[0];const jlink=document.getElementById('j-link');if(jlink)jlink.value='';const jprev=document.getElementById('j-img-preview');if(jprev)jprev.innerHTML='';juntaImgs=[];}
+  if(type==='junta'){document.getElementById('j-quien').value='';document.getElementById('j-notas').value='';document.getElementById('j-fecha').value=new Date().toISOString().split('T')[0];const jlink=document.getElementById('j-link');if(jlink)jlink.value='';const jprev=document.getElementById('j-img-preview');if(jprev)jprev.innerHTML='';juntaImgs=[];const jproj=document.getElementById('j-proj');if(jproj)jproj.value=S.proj;}
   if(type==='recordatorio'){document.getElementById('r-texto').value='';document.getElementById('r-proj').value=S.proj;}
   if(type==='victoria')document.getElementById('f-vic').value='';
   if(type==='newproj'){['np-nombre','np-ubicacion','np-cliente'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
@@ -913,7 +920,7 @@ async function rBriefing(){
     cont.innerHTML+=`<div class="briefing-item" style="border-left:3px solid #e05555;padding-left:12px"><div class="briefing-item-label" style="color:#e05555">Contacto pendiente</div><div class="briefing-item-content"><strong>${alertC.nombre}</strong> — ${label} <button onclick="palomitaContacto(${(sharedData.contactos||[]).indexOf(alertC)})" style="margin-left:8px;font-size:12px;background:var(--black);color:white;border:none;border-radius:6px;padding:3px 10px;cursor:pointer">✓ Hablaron hoy</button></div></div>`;
   }
   try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,
         messages:[{role:'user',content:`Eres la asistente de ${S.profile==='laiza'?'Laiza':'Regina'} en OR Arquitectas. Da un briefing del día en 2 frases muy cortas y directas. Tareas urgentes: ${JSON.stringify(tareas.filter(r=>r.p==='alta').map(r=>r.t))}. Última junta: ${ultima?`con ${ultima.q}, ${ultima.f}`:'ninguna'}. Sin mencionar nombres de personas específicas.`}]})});
     const d=await r.json();
@@ -1077,25 +1084,62 @@ function rVic(){
 // JUNTAS + DECISIONES
 function rJun(){
   const list=document.getElementById('jun-list');if(!list)return;
-  const items=S.data[S.profile].jun[S.proj]||[];
-  const decs=S.data[S.profile].dec[S.proj]||[];
-  document.getElementById('jun-eye').textContent=PROJS[S.proj]?.name||S.proj;
-  if(!items.length&&!decs.length){list.innerHTML='<div class="empty"><i class="ti ti-users"></i><p>Sin juntas ni decisiones registradas.</p></div>';return;}
-  // Show decisions at top if any
+  // Collect ALL juntas and decisions from ALL projects
+  const allJuntas=[];
+  Object.entries(S.data[S.profile].jun).forEach(([proj,items])=>{
+    (items||[]).forEach((j,i)=>allJuntas.push({...j,_proj:proj,_idx:i}));
+  });
+  const allDecs=[];
+  Object.entries(S.data[S.profile].dec).forEach(([proj,items])=>{
+    (items||[]).forEach((d,i)=>allDecs.push({...d,_proj:proj,_idx:i}));
+  });
+  // Sort juntas by date descending
+  const parseDate=f=>{if(!f)return 0;const p=f.split(' ');const m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'].indexOf(p[1]);return m>=0?new Date(parseInt(p[2]),m,parseInt(p[0])).getTime():0;};
+  allJuntas.sort((a,b)=>parseDate(b.f)-parseDate(a.f));
+  if(!allJuntas.length&&!allDecs.length){list.innerHTML='<div class="empty"><i class="ti ti-users"></i><p>Sin juntas ni decisiones registradas.</p></div>';return;}
   let h='';
-  if(decs.length){
-    h+=`<div style="margin-bottom:20px"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px">Decisiones registradas</div>`;
-    h+=decs.map((d,i)=>`<div class="card card-accent" style="margin-bottom:8px"><div style="display:flex;align-items:flex-start;gap:12px"><div style="flex:1"><div class="card-body">${d.t}</div><div class="card-meta"><span class="badge ${d.e}">${d.e}</span><span>${d.f}</span><div style="margin-left:auto;display:flex;gap:8px"><i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:15px" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="editDec(${i})"></i><i class="ti ti-trash r-del" onclick="deleteDec(${i})"></i></div></div></div>${d.img?`<img class="img-thumb" src="${d.img}" onclick="lb('${d.img}')">`:`<div class="img-placeholder" onclick="attachImg(${i})"><i class="ti ti-photo-plus"></i></div>`}</div></div>`).join('');
-    h+=`<button class="add-btn" style="margin-top:8px" onclick="openDecModal()"><i class="ti ti-plus"></i>Registrar decisión</button></div>`;
+  // Decisions
+  if(allDecs.length){
+    h+=`<div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;font-weight:600">Decisiones</div>`;
+    h+=allDecs.map(d=>{
+      const grad=getProjGradient(d._proj)||'linear-gradient(135deg,#999,#ccc)';
+      return `<div class="card card-accent" style="margin-bottom:8px"><div style="display:flex;align-items:flex-start;gap:12px"><div style="flex:1">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background-image:${grad};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px">${PROJS[d._proj]?.name||d._proj}</div>
+        <div class="card-body">${d.t}</div>
+        <div class="card-meta"><span class="badge ${d.e}">${d.e}</span><span>${d.f}</span>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:15px" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="S.proj='${d._proj}';editDec(${d._idx})"></i>
+            <i class="ti ti-trash r-del" onclick="S.proj='${d._proj}';deleteDec(${d._idx})"></i>
+          </div>
+        </div>
+      </div>${d.img?`<img class="img-thumb" src="${d.img}" onclick="lb('${d.img}')">`:`<div class="img-placeholder" onclick="S.proj='${d._proj}';attachImg(${d._idx})"><i class="ti ti-photo-plus"></i></div>`}</div></div>`;
+    }).join('');
+    h+=`<button class="add-btn" style="margin-bottom:20px;margin-top:4px" onclick="openDecModal()"><i class="ti ti-plus"></i>Registrar decisión</button>`;
   } else {
-    h+=`<button class="add-btn" style="margin-bottom:16px" onclick="openDecModal()"><i class="ti ti-plus"></i>Registrar decisión</button>`;
+    h+=`<button class="add-btn" style="margin-bottom:20px" onclick="openDecModal()"><i class="ti ti-plus"></i>Registrar decisión</button>`;
   }
-  if(items.length){
-    h+=`<div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px">Juntas</div>`;
-    h+=items.map((j,i)=>{
-      const imgsHtml=j.imgs&&j.imgs.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">'+j.imgs.map(src=>`<img src="${src}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer" onclick="lb('${src}')">`).join('')+'</div>':'';
-      const linkHtml=j.link?`<a href="${j.link}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--gray2);margin-top:8px;text-decoration:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;background:var(--gray6)"><i class="ti ti-paperclip" style="font-size:14px"></i>Archivo adjunto</a>`:'';
-      return `<div class="junta-card"><div class="junta-hdr"><div><div class="junta-who">${j.q}</div><div class="junta-date">${j.f}</div></div><div style="display:flex;gap:8px"><i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:16px" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="editJun(${i})"></i><i class="ti ti-trash r-del" onclick="deleteJun(${i})"></i></div></div><div class="junta-notes">${j.n.replace(/\n/g,'<br>')}</div>${imgsHtml}${linkHtml}${j.tareas&&j.tareas.length?`<div class="junta-tareas"><div class="junta-tareas-title">Tareas detectadas</div>${j.tareas.map(t=>`<div class="junta-dec-item"><i class="ti ti-circle-check" style="color:var(--gray3);font-size:14px"></i>${t}</div>`).join('')}</div>`:''}</div>`;
+  // Juntas
+  if(allJuntas.length){
+    h+=`<div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;font-weight:600">Juntas</div>`;
+    h+=allJuntas.map(j=>{
+      const grad=getProjGradient(j._proj)||'linear-gradient(135deg,#999,#ccc)';
+      const imgsHtml=j.imgs&&j.imgs.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">'+j.imgs.map(src=>`<img src="${src}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;cursor:pointer" onclick="lb('${src}')">`).join('')+'</div>':'';
+      const tareasHtml=j.tareas&&j.tareas.length?`<div class="junta-tareas"><div class="junta-tareas-title">Tareas detectadas</div>${j.tareas.map(t=>`<div class="junta-dec-item"><i class="ti ti-circle-check" style="color:var(--gray3);font-size:14px"></i>${t}</div>`).join('')}</div>`:'';
+      return `<div class="junta-card">
+        <div class="junta-hdr">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background-image:${grad};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:3px">${PROJS[j._proj]?.name||j._proj}</div>
+            <div class="junta-who">${j.q}</div>
+            <div class="junta-date">${j.f}</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:16px" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="S.proj='${j._proj}';editJun(${j._idx})"></i>
+            <i class="ti ti-trash r-del" onclick="S.proj='${j._proj}';deleteJun(${j._idx})"></i>
+          </div>
+        </div>
+        <div class="junta-notes">${j.n.replace(/\n/g,'<br>')}</div>
+        ${imgsHtml}${tareasHtml}
+      </div>`;
     }).join('');
   }
   list.innerHTML=h;
@@ -1196,14 +1240,15 @@ function saveJunta(){
   const q=document.getElementById('j-quien').value.trim(),n=document.getElementById('j-notas').value.trim();if(!q||!n)return;
   const[y,m,d]=document.getElementById('j-fecha').value.split('-');
   const f=`${parseInt(d)} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][parseInt(m)-1]} ${y}`;
-  const link=document.getElementById('j-link')?.value.trim()||'';
+  const projSel=document.getElementById('j-proj')?.value||S.proj;
   const imgs=[...juntaImgs];
   juntaImgs=[];
   const prev=document.getElementById('j-img-preview');if(prev)prev.innerHTML='';
-  S.data[S.profile].jun[S.proj].push({q,f,n,imgs,link});
+  if(!S.data[S.profile].jun[projSel])S.data[S.profile].jun[projSel]=[];
+  S.data[S.profile].jun[projSel].push({q,f,n,imgs});
   cm('junta');rJun();toast('Minuta guardada ✓');
   saveAll(S.profile);
-  extraerTareasDeMinuta(n,q,f,imgs);
+  extraerTareasDeMinuta(n,q,f,imgs,projSel);
 }
 function saveRecordatorio(){
   const t=document.getElementById('r-texto').value.trim();if(!t)return;
@@ -1321,7 +1366,8 @@ function saveNewProj(){
 }
 
 // JUNTAS IA
-async function extraerTareasDeMinuta(notas,quien,fecha,imgs){
+async function extraerTareasDeMinuta(notas,quien,fecha,imgs,proj){
+  const projTarget=proj||S.proj;
   try{
     const content=[];
     if(imgs&&imgs.length){
@@ -1332,31 +1378,72 @@ async function extraerTareasDeMinuta(notas,quien,fecha,imgs){
       });
     }
     content.push({type:'text',text:`Analiza esta minuta${imgs&&imgs.length?' y las imágenes adjuntas':''}. Responde SOLO JSON: {"tareas":[{"texto":"tarea concisa","prioridad":"alta|media|baja"}],"decisiones":[{"texto":"decisión","estado":"aprobado|rechazado|pendiente"}]}. Arrays vacíos si no hay.\n\nJunta con ${quien} (${fecha}):\n${notas}`});
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,
         messages:[{role:'user',content}]})});
     const data=await r.json();
     const raw=data.content?.[0]?.text||'{}';
     const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
     if(parsed.decisiones?.length){
-      parsed.decisiones.forEach(d=>{S.data[S.profile].dec[S.proj].push({t:d.texto,e:d.estado,f:today(),img:null});});
+      if(!S.data[S.profile].dec[projTarget])S.data[S.profile].dec[projTarget]=[];
+      parsed.decisiones.forEach(d=>{S.data[S.profile].dec[projTarget].push({t:d.texto,e:d.estado,f:today(),img:null});});
       saveAll(S.profile);
     }
-    if(parsed.tareas?.length)mostrarTareasExtraidas(parsed.tareas);
+    if(parsed.tareas?.length)mostrarTareasExtraidas(parsed.tareas,projTarget);
     else rJun();
   }catch(e){rJun();}
 }
-function mostrarTareasExtraidas(tareas){
+function mostrarTareasExtraidas(tareas,projTarget){
   const overlay=document.getElementById('tareas-overlay');
-  document.getElementById('tareas-list').innerHTML=tareas.map((t,i)=>`<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><input type="checkbox" id="tarea-${i}" checked style="margin-top:4px;width:16px;height:16px;accent-color:var(--gray2);cursor:pointer;flex-shrink:0"><div><label for="tarea-${i}" style="font-size:14px;color:var(--black);font-weight:300;cursor:pointer;line-height:1.5;display:block">${t.texto}</label><span style="font-size:11px;color:var(--gray3);text-transform:uppercase;letter-spacing:0.08em">${t.prioridad}</span></div></div>`).join('');
-  overlay._tareas=tareas;overlay.style.display='flex';
+  document.getElementById('tareas-list').innerHTML=tareas.map((t,i)=>{
+    const prio=(['alta','media','baja'].includes(t.prioridad))?t.prioridad:'media';
+    const prioColor=prio==='alta'?'#e05555':prio==='media'?'#ff8c00':'#aaa';
+    const prioLabel=prio==='alta'?'URGENTE':prio==='media'?'ESTA SEMANA':'CUANDO PUEDA';
+    return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:8px">
+        <input type="checkbox" id="tarea-${i}" checked style="margin-top:4px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
+        <div style="flex:1">
+          <label for="tarea-${i}" style="font-size:14px;color:var(--black);font-weight:400;cursor:pointer;display:block;line-height:1.5">${t.texto}</label>
+          <span style="font-size:10px;font-weight:700;color:${prioColor};text-transform:uppercase;letter-spacing:0.08em">${prioLabel}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-left:28px">
+        <button id="para-laiza-${i}" onclick="selParaBtn(this,'para-laiza-${i}','para-regina-${i}','para-ambas-${i}')" style="padding:5px 14px;font-size:12px;border:1px solid var(--border);border-radius:20px;cursor:pointer;background:var(--black);color:white;font-family:var(--font-b)">Laiza</button>
+        <button id="para-regina-${i}" onclick="selParaBtn(this,'para-laiza-${i}','para-regina-${i}','para-ambas-${i}')" style="padding:5px 14px;font-size:12px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-family:var(--font-b)">Regina</button>
+        <button id="para-ambas-${i}" onclick="selParaBtn(this,'para-laiza-${i}','para-regina-${i}','para-ambas-${i}')" style="padding:5px 14px;font-size:12px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-family:var(--font-b)">Ambas</button>
+      </div>
+    </div>`;
+  }).join('');
+  overlay._tareas=tareas;
+  overlay._proj=projTarget||S.proj;
+  overlay.style.display='flex';
+}
+function selParaBtn(btn,lId,rId,aId){
+  [lId,rId,aId].forEach(id=>{const el=document.getElementById(id);if(el){el.style.background='';el.style.color='';}});
+  btn.style.background='var(--black)';btn.style.color='white';
 }
 function agregarTareasSeleccionadas(){
   const overlay=document.getElementById('tareas-overlay');
-  const tareas=overlay._tareas||[];let n=0;
-  tareas.forEach((t,i)=>{const cb=document.getElementById(`tarea-${i}`);if(cb?.checked){S.data[S.profile].rec.unshift({t:t.texto,p:t.prioridad,proj:S.proj,done:false});n++;}});
-  overlay.style.display='none';if(n>0){saveAll(S.profile);toast(`${n} tarea${n>1?'s':''} agregada${n>1?'s':''} ✓`);}
-  rJun();
+  const tareas=overlay._tareas||[];
+  const proj=overlay._proj||S.proj;
+  let n=0;
+  tareas.forEach((t,i)=>{
+    const cb=document.getElementById(`tarea-${i}`);
+    if(!cb?.checked)return;
+    const prio=(['alta','media','baja'].includes(t.prioridad))?t.prioridad:'media';
+    const lBtn=document.getElementById(`para-laiza-${i}`);
+    const rBtn=document.getElementById(`para-regina-${i}`);
+    const aBtn=document.getElementById(`para-ambas-${i}`);
+    const laizaSel=lBtn?.style.background==='var(--black)';
+    const reginaSel=rBtn?.style.background==='var(--black)';
+    const ambasSel=aBtn?.style.background==='var(--black)';
+    const tarea={t:t.texto,p:prio,proj,done:false};
+    if(laizaSel||ambasSel||(!laizaSel&&!reginaSel&&!ambasSel)){if(!S.data.laiza.rec)S.data.laiza.rec=[];S.data.laiza.rec.unshift({...tarea});n++;}
+    if(reginaSel||ambasSel){if(!S.data.regina.rec)S.data.regina.rec=[];S.data.regina.rec.unshift({...tarea});n++;}
+  });
+  overlay.style.display='none';
+  if(n>0){saveAll('laiza');saveAll('regina');toast(`Tareas agregadas ✓`);}
+  rJun();rRec();
 }
 
 // CALENDARIO
@@ -1410,7 +1497,7 @@ async function planearSemana(){
   const week=getWeekStart(semOffset);
   const days=Array.from({length:7},(_,i)=>{const d=new Date(week);d.setDate(d.getDate()+i);return{key:fmtDate(d),label:`${DIAS[d.getDay()]} ${d.getDate()}`};});
   try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:`Distribuye tareas en días de semana. Responde SOLO JSON: {"plan":{"YYYY-MM-DD":[0,1]},"razon":"2 oraciones"}. Max 2-3 tareas por día, lunes-viernes primero.`,messages:[{role:'user',content:`Tareas: ${JSON.stringify(tareas.map((t,i)=>({idx:i,tarea:t.t,prioridad:t.p})))}\nDías: ${JSON.stringify(days)}`}]})});
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:`Distribuye tareas en días de semana. Responde SOLO JSON: {"plan":{"YYYY-MM-DD":[0,1]},"razon":"2 oraciones"}. Max 2-3 tareas por día, lunes-viernes primero.`,messages:[{role:'user',content:`Tareas: ${JSON.stringify(tareas.map((t,i)=>({idx:i,tarea:t.t,prioridad:t.p})))}\nDías: ${JSON.stringify(days)}`}]})});
     const d=await r.json();
     const parsed=JSON.parse((d.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
     if(parsed.plan){if(!semPlan[S.profile])semPlan[S.profile]={};Object.assign(semPlan[S.profile],parsed.plan);saveAll(S.profile);}
@@ -1457,7 +1544,7 @@ async function refreshStats(){
     <div class="card" id="ai-stats"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px"><i class="ti ti-sparkles" style="font-size:13px;color:var(--gray2)"></i>Análisis de IA</div><div style="font-size:14px;color:var(--gray2);font-weight:300;line-height:1.7">Generando...</div></div>`;
   setTimeout(()=>{drawDonut('donut1',totalApp,totalDec,'#7ab870');drawDonut('donut2',totalDone,totalTasks,'var(--gray2)');},100);
   try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Analiza brevemente en 2-3 oraciones en español los datos de ${S.profile==='laiza'?'Laiza':'Regina'} en OR Arquitectas. ${totalDec} decisiones (${totalApp} aprobadas, ${totalRej} rechazadas), ${totalDone}/${totalTasks} tareas completadas, ${vic} logros. Proyectos: ${JSON.stringify(Object.values(byProj).map(p=>({nombre:p.name,decisiones:p.dec,tareas:p.tasks})))}. Sin mencionar nombres de personas.`}]})});
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Analiza brevemente en 2-3 oraciones en español los datos de ${S.profile==='laiza'?'Laiza':'Regina'} en OR Arquitectas. ${totalDec} decisiones (${totalApp} aprobadas, ${totalRej} rechazadas), ${totalDone}/${totalTasks} tareas completadas, ${vic} logros. Proyectos: ${JSON.stringify(Object.values(byProj).map(p=>({nombre:p.name,decisiones:p.dec,tareas:p.tasks})))}. Sin mencionar nombres de personas.`}]})});
     const d=await r.json();
     document.querySelector('#ai-stats div:last-child').innerHTML=(d.content?.[0]?.text||'Sin datos suficientes.').replace(/\n/g,'<br>');
   }catch(e){document.querySelector('#ai-stats div:last-child').textContent='Error al conectar.';}
@@ -1486,7 +1573,7 @@ async function refreshProductividad(){
     <div class="card" id="ai-prod"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px"><i class="ti ti-sparkles" style="font-size:13px;color:var(--gray2)"></i>Análisis de IA</div><div style="font-size:14px;color:var(--gray2);font-weight:300;line-height:1.7">Generando...</div></div>`;
   setTimeout(()=>drawDonut('donut-reg',tareasHechas,totalTareas,'#8b2a4a'),100);
   try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Analiza la productividad de Regina en OR Arquitectas en 2-3 oraciones. ${totalJuntas} juntas documentadas, ${tasa}% tasa de cierre, ${tareasPend} pendientes. Da una recomendación concreta para esta semana.`}]})});
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Analiza la productividad de Regina en OR Arquitectas en 2-3 oraciones. ${totalJuntas} juntas documentadas, ${tasa}% tasa de cierre, ${tareasPend} pendientes. Da una recomendación concreta para esta semana.`}]})});
     const d=await r.json();document.querySelector('#ai-prod div:last-child').innerHTML=(d.content?.[0]?.text||'Sin datos.').replace(/\n/g,'<br>');
   }catch(e){}
 }
