@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OR Arquitectas</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --font-b:'Outfit',sans-serif;
+  --font-d:'Cormorant',Georgia,serif;
+  --bg:#f4f4f4;
+  --white:#ffffff;
+  --black:#111111;
+  --gray1:#111111;
+  --gray2:#555555;
+  --gray3:#999999;
+  --gray4:#cccccc;
+  --gray5:#e8e8e8;
+  --gray6:#f4f4f4;
+  --border:rgba(0,0,0,0.06);
+  --border2:rgba(0,0,0,0.11);
+  --accent:#6a6560;
+  --accent-light:#f4f4f4;
+  --accent2:#999999;
+  --burg:#8b2a4a;
+  --burg-light:#f0e0e6;
+  --ok-bg:#edf5e8;--ok-txt:#3a6020;
+  --no-bg:#f8eae8;--no-txt:#8a3020;
+  --wait-bg:#fdf4e3;--wait-txt:#7a5010;
+  --shadow:0 2px 20px rgba(0,0,0,0.06);
+  --shadow2:0 8px 40px rgba(0,0,0,0.1);
+}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-b);background:#f4f4f4;color:var(--black);font-size:16px;position:relative}
+body::before{content:'';position:fixed;inset:0;background:var(--body-grad,linear-gradient(135deg,rgba(255,102,0,0.12) 0%,rgba(255,204,0,0.06) 50%,rgba(255,255,255,0) 100%));pointer-events:none;z-index:0;transition:background 2s ease}
+
+/* APP LAYOUT */
+.app{display:flex;height:100vh;padding:16px;gap:14px}
+
+/* SIDEBAR */
+  .sidebar{width:320px;border-radius:20px;background:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.9);box-shadow:0 8px 32px rgba(0,0,0,0.08);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:relative;z-index:1}
+.sidebar::-webkit-scrollbar{display:none}
+
+/* LOGO */
+.s-logo{padding:22px 20px 16px;border-bottom:1px solid var(--border)}
+.logo-svg{width:56px;height:40px;display:block;margin-bottom:10px}
+.s-profiles{display:flex;gap:6px}
+.pbtn{flex:1;padding:9px 0;font-size:12px;font-family:var(--font-b);background:#e0e0e0;border:none;border-radius:10px;color:#888;cursor:pointer;transition:all .2s;font-weight:600;letter-spacing:0.02em}
+.pbtn.active-laiza{background:var(--black);color:white;font-weight:700}
+.pbtn.active-regina{background:var(--black);color:white;font-weight:700}
+
+/* NAV */
+.s-section{padding:16px 20px 8px;font-size:10px;color:var(--gray4);letter-spacing:0.18em;text-transform:uppercase;font-weight:500}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;transition:all .15s;border-radius:10px;margin:2px 8px;position:relative}
+.nav-item:hover{background:var(--gray6)}
+.nav-item.active{background:rgba(0,0,0,0.04)}
+.nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.nav-name{font-size:14px;color:var(--gray2);flex:1;font-weight:500;transition:color .15s;letter-spacing:0.01em}
+.nav-item.active .nav-name{color:var(--gray2);font-weight:600}
+.nav-item:hover .nav-name{color:var(--black)}
+
+/* PROJECT STAGE BAR */
+.proj-stage-wrap{padding:3px 20px 10px}
+.proj-stage-bar{display:flex;gap:3px;margin-top:4px;width:fit-content}
+.stage-dot{width:10px;height:2px;border-radius:2px;background:var(--gray5);cursor:pointer;transition:all .2s;flex:none}
+.stage-dot.active{background:var(--black)}
+.stage-dot.done{background:rgba(0,0,0,0.2)}
+.stage-label{font-size:9px;color:var(--gray3);margin-top:3px;letter-spacing:0.04em}
+
+/* SIDEBAR BOTTOM */
+.s-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
+.sync-row{display:flex;align-items:center;gap:7px;padding:4px 2px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--gray4);flex-shrink:0;transition:all .3s}
+.sync-dot.ok{background:#7ab870}
+.sync-dot.saving{background:linear-gradient(135deg,#cc2200,#ffff00);animation:pulse .8s infinite}
+.sync-dot.err{background:#c44}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes pulse-nav{0%,100%{background:transparent}50%{background:rgba(0,0,0,0.08)}}
+.sync-label{font-size:11px;color:var(--gray3)}
+.add-proj-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border:1.5px dashed var(--border2);border-radius:10px;background:transparent;color:var(--gray3);font-family:var(--font-b);font-size:12px;cursor:pointer;transition:all .15s;margin-bottom:8px}
+.add-proj-btn:hover{border-color:var(--gray2);color:var(--gray2);background:var(--gray5)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;border-radius:20px;background:rgba(255,255,255,0.82);box-shadow:0 8px 40px rgba(0,0,0,0.08);border:1px solid rgba(255,255,255,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:relative;z-index:1}
+
+/* PROFILE BANNER */
+.p-banner{display:none}
+.p-banner.laiza{background:transparent}
+.p-banner.regina{background:transparent}
+.p-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:14px;flex-shrink:0;font-style:italic;font-weight:400}
+.p-banner.laiza .p-av{background:var(--gray5);color:var(--gray2);border:1.5px solid rgba(181,98,42,0.3)}
+.p-banner.regina .p-av{background:var(--burg-light);color:var(--burg);border:1.5px solid rgba(139,42,74,0.3)}
+.p-name{font-size:24px;font-weight:900;color:var(--black);letter-spacing:-0.02em;line-height:1}
+.p-role{font-size:11px;color:var(--gray3);margin-top:2px;font-weight:300;letter-spacing:0.04em}
+.p-date{margin-left:auto;text-align:right}
+.p-day{font-size:22px;font-weight:700;color:var(--black);line-height:1;font-family:var(--font-b)}
+.p-month{font-size:11px;color:var(--gray3);margin-top:2px;text-transform:uppercase;letter-spacing:0.1em}
+
+/* TABS */
+.tabs{display:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:16px 0;margin-right:24px;font-size:12px;cursor:pointer;color:var(--gray3);border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;flex-shrink:0}
+.tab.active{color:var(--black);border-bottom:4px solid transparent;border-image:var(--grad-current,linear-gradient(135deg,#cc2200,#ffff00)) 1;font-weight:800}
+.tab:hover:not(.active){color:var(--gray2)}
+
+/* PANELS */
+.panel{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.panel.active{display:flex}
+.panel::-webkit-scrollbar{width:4px}
+.panel::-webkit-scrollbar-thumb{background:var(--gray5);border-radius:2px}
+.panel-body{padding:28px 36px;flex:1}
+
+/* PANEL HEADER */
+.ph{margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ph-eyebrow{display:none}
+.ph-title{font-family:var(--font-b);font-size:42px;font-weight:900;letter-spacing:-0.02em;line-height:1;color:var(--black);font-style:normal}
+.add-btn{padding:8px 16px;font-size:12px;font-family:var(--font-b);border:none;border-radius:10px;background:var(--black);color:white;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;white-space:nowrap;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.15)}
+.add-btn:hover{opacity:0.85;transform:translateY(-1px)}
+.add-btn i{font-size:15px}
+.add-btn.accent{background:linear-gradient(135deg,#cc2200,#ffff00);color:var(--white);border:none;font-weight:700;transition:background .3s}
+.add-btn.accent:hover{background:#9a4f1f}
+
+/* CARDS */
+.card{background:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.9);border-radius:16px;padding:16px 18px;margin-bottom:10px;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,0.05);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.card-accent{border-left:3px solid var(--gray2)}
+.card-body{font-size:15px;line-height:1.65;color:var(--black);font-weight:300}
+.card-meta{font-size:12px;color:var(--gray3);margin-top:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+/* BADGES */
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.badge.aprobado{background:var(--ok-bg);color:var(--ok-txt)}
+.badge.rechazado{background:var(--no-bg);color:var(--no-txt)}
+.badge.pendiente{background:var(--wait-bg);color:var(--wait-txt)}
+
+/* INICIO */
+.inicio-hero{padding:36px 28px 28px;background:var(--white);border-bottom:1px solid var(--border)}
+.inicio-greeting{font-family:var(--font-b);font-size:58px;font-weight:900;font-style:normal;color:var(--black);line-height:0.95;margin-bottom:8px;letter-spacing:-0.03em}
+.inicio-date{font-size:13px;color:var(--gray3);font-weight:300;margin-bottom:20px;text-transform:capitalize}
+.inicio-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.inicio-card{background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.7);border-radius:20px;padding:24px;cursor:pointer;transition:all .25s;box-shadow:0 2px 16px rgba(0,0,0,0.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.inicio-card:hover{box-shadow:0 12px 32px rgba(0,0,0,0.1);border-color:rgba(255,255,255,0.9);transform:translateY(-3px);background:rgba(255,255,255,0.65)}
+.inicio-card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:16px}
+.inicio-card-title{font-size:15px;font-weight:700;color:var(--black);margin-bottom:4px}
+.inicio-card-sub{font-size:12px;color:var(--gray3);font-weight:300}
+.inicio-briefing{padding:24px 36px}
+.briefing-title{font-size:10px;color:var(--gray3);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-weight:600}
+.briefing-items{display:flex;flex-direction:column;gap:0}
+.briefing-item{background:transparent;border-radius:0;padding:12px 0;border:none;border-bottom:1px solid var(--border)}
+.briefing-item-label{font-size:10px;color:var(--gray3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px}
+.briefing-item-content{font-size:15px;color:var(--black);font-weight:400;line-height:1.65}
+.briefing-empty{font-size:14px;color:var(--gray4);font-style:italic;font-weight:300}
+
+/* POR HACER */
+.rec-filter{display:flex;border:1px solid var(--border2);border-radius:10px;overflow:hidden;background:var(--gray6);padding:2px;gap:2px}
+.rec-filter-btn{padding:7px 14px;font-size:12px;font-family:var(--font-b);border:none;background:transparent;color:var(--gray3);cursor:pointer;transition:all .15s;font-weight:500;border-radius:8px}
+.rec-filter-btn.active{background:var(--black);color:white;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.reminder{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)}
+.reminder:last-child{border-bottom:none}
+.r-pip{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.r-pip.alta{background:#e05555}
+.r-pip.media{background:var(--gray2)}
+.r-pip.baja{background:var(--gray4)}
+.r-body{flex:1}
+.r-text{font-size:16px;line-height:1.6;color:var(--black);font-weight:400}
+.r-meta{font-size:11px;color:var(--gray3);margin-top:4px;display:flex;gap:10px}
+.r-done{color:var(--gray4);cursor:pointer;font-size:18px;transition:color .15s;flex-shrink:0;margin-top:1px}
+.r-done:hover{color:var(--ok-txt)}
+.r-del{color:var(--gray4);cursor:pointer;font-size:16px;transition:color .15s;flex-shrink:0;margin-top:2px}
+.r-del:hover{color:#e05555}
+
+/* VICTORIAS */
+.victory{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.victory:last-child{border-bottom:none}
+.v-star{color:var(--gray2);font-size:16px;margin-top:2px;flex-shrink:0}
+.v-text{font-size:16px;line-height:1.6;flex:1;color:var(--black);font-weight:400}
+.v-date{font-size:11px;color:var(--gray4);margin-top:3px}
+
+/* JUNTAS + DECISIONES */
+.junta-card{border:1px solid rgba(255,255,255,0.9);border-radius:16px;padding:18px 20px;margin-bottom:12px;background:rgba(255,255,255,0.7);box-shadow:0 2px 12px rgba(0,0,0,0.05);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.junta-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:12px}
+.junta-who{font-size:15px;font-weight:600;color:var(--black)}
+.junta-date{font-size:12px;color:var(--gray3);margin-top:2px}
+.junta-notes{font-size:14px;line-height:1.75;color:var(--gray2);font-weight:300;border-top:1px solid var(--border);padding-top:12px;margin-bottom:12px}
+.junta-tareas{border-top:1px solid var(--border);padding-top:10px}
+.junta-tareas-title{font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px}
+.junta-dec-list{margin-top:8px}
+.junta-dec-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--gray6);border-radius:8px;margin-bottom:5px;font-size:13px;color:var(--black);font-weight:300}
+
+/* IMAGEN */
+.img-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;cursor:pointer}
+.img-placeholder{width:52px;height:52px;border-radius:10px;border:1.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;color:var(--gray4);font-size:20px;flex-shrink:0;cursor:pointer;transition:all .2s}
+.img-placeholder:hover{border-color:var(--gray2);color:var(--gray2)}
+
+/* DATOS DEL PROYECTO */
+.datos-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.datos-col-title{font-size:10px;color:var(--gray3);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:14px;font-weight:500}
+.datos-field{padding:14px 0;border-bottom:1px solid var(--border)}
+.datos-label{font-size:10px;color:var(--gray3);margin-bottom:6px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase}
+.datos-input{width:100%;border:none;font-size:18px;font-family:var(--font-b);font-weight:600;color:var(--black);background:transparent;outline:none;border-bottom:2px solid transparent;transition:border-color .2s;padding:3px 0}
+.datos-input:focus{border-bottom-color:var(--gray2)}
+.datos-input::placeholder{color:var(--gray4);font-weight:300}
+.datos-select{width:100%;border:none;font-size:16px;font-family:var(--font-b);font-weight:500;color:var(--black);background:transparent;outline:none;cursor:pointer;padding:2px 0}
+
+/* ANTES DE EMPEZAR — editable */
+.antes-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.antes-item-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.antes-check{width:18px;height:18px;border:1.5px solid var(--border2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;background:var(--white)}
+.antes-check.done{background:var(--black);border-color:var(--black)}
+.antes-check.done i{color:white;font-size:10px}
+.antes-name-input{flex:1;border:none;font-size:14px;font-family:var(--font-b);font-weight:400;color:var(--black);background:transparent;outline:none}
+.antes-name-input.done{color:var(--gray3);text-decoration:none}
+.antes-val-input{width:100%;border:none;border-bottom:1px solid var(--border);padding:4px 0;font-size:14px;font-family:var(--font-b);font-weight:300;color:var(--gray2);background:transparent;outline:none;transition:border-color .2s}
+.antes-val-input:focus{border-bottom-color:var(--gray2)}
+.antes-val-input::placeholder{color:var(--gray4)}
+.prog-bar{height:2px;background:var(--gray5);border-radius:1px;margin-bottom:16px}
+.prog-fill{height:100%;border-radius:1px;background:linear-gradient(135deg,#cc2200,#ffff00);transition:width .4s}
+
+/* STATS */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.stat-num{font-size:44px;font-weight:900;color:var(--black);font-family:var(--font-b);line-height:1;margin:8px 0 4px;letter-spacing:-0.03em}
+.stat-label{font-size:10px;color:var(--gray3);letter-spacing:0.12em;text-transform:uppercase}
+.stat-icon{font-size:20px;margin-bottom:4px}
+.donut-wrap{display:flex;align-items:center;gap:20px}
+
+/* CALENDARIO */
+.cal-toggle{display:flex;border:1px solid var(--border2);border-radius:10px;overflow:hidden;background:var(--gray6);margin-bottom:16px}
+.cal-toggle-btn{padding:7px 16px;font-size:12px;font-family:var(--font-b);border:none;background:transparent;color:var(--gray3);cursor:pointer;transition:all .15s;border-radius:8px;font-weight:500}
+.cal-toggle-btn.active{background:var(--black);color:white;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.day-col{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:10px 8px;min-height:110px;transition:all .2s}
+.day-col.today{border-color:var(--gray2);background:var(--gray5)}
+.day-header{font-size:10px;font-weight:600;color:var(--gray3);letter-spacing:0.08em;text-transform:uppercase;text-align:center;margin-bottom:3px}
+.day-num{font-size:20px;font-weight:700;color:var(--black);text-align:center;margin-bottom:8px;line-height:1}
+.day-col.today .day-num{color:var(--gray2)}
+.sem-task{border-radius:7px;padding:5px 8px;margin-bottom:5px;font-size:11px;font-weight:400;color:var(--black);cursor:grab;border-left:3px solid;transition:all .15s;user-select:none;background:var(--gray6)}
+.sem-task.alta{border-left-color:#e05555;background:#fef5f5}
+.sem-task.media{border-left-color:var(--gray2);background:var(--gray5)}
+.sem-task.baja{border-left-color:var(--gray4);background:var(--gray6)}
+.sem-task .proj-name{font-size:10px;color:var(--gray3);margin-top:2px}
+.sem-junta{background:var(--gray5);border-radius:7px;padding:5px 8px;margin-bottom:5px;font-size:11px;color:var(--gray2);border-left:3px solid var(--gray2)}
+.day-drop{min-height:30px;border:1.5px dashed transparent;border-radius:7px;transition:all .2s;margin-top:3px}
+.day-drop.over{border-color:var(--gray2);background:var(--gray5)}
+
+/* MODALES */
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100}
+.modal{background:rgba(255,255,255,0.88);border:1px solid rgba(255,255,255,0.95);border-radius:22px;padding:28px 32px;width:460px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.18);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+.modal-eyebrow{font-size:10px;color:var(--gray3);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:6px}
+.modal-title{font-family:var(--font-d);font-size:28px;font-weight:300;font-style:italic;margin-bottom:6px;color:var(--black)}
+.modal-sub{font-size:13px;color:var(--gray3);margin-bottom:22px;line-height:1.6;font-weight:300}
+.form-row{margin-bottom:16px}
+.form-label{font-size:10px;color:var(--gray3);margin-bottom:6px;display:block;font-weight:500;letter-spacing:0.14em;text-transform:uppercase}
+.form-input,.form-select,.form-textarea{width:100%;border:1px solid var(--border2);border-radius:10px;padding:11px 14px;font-size:15px;font-family:var(--font-b);background:var(--gray6);color:var(--black);outline:none;transition:all .2s;font-weight:300}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.6}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gray3);background:var(--white)}
+.form-btns{display:flex;gap:10px;margin-top:20px}
+.fbtn{flex:1;padding:12px;font-size:14px;font-family:var(--font-b);cursor:pointer;border:1px solid var(--border2);border-radius:12px;background:var(--white);color:var(--gray2);transition:all .15s}
+.fbtn.primary{background:var(--black);color:white;border:none;font-weight:700}
+.fbtn:hover{opacity:.8}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:12px;padding:16px;text-align:center;cursor:pointer;font-size:13px;color:var(--gray3);transition:all .2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
+.upload-zone:hover{border-color:var(--gray2);color:var(--gray2)}
+.preview-img{width:100%;max-height:120px;object-fit:cover;border-radius:10px;margin-top:8px;display:none;border:1px solid var(--border)}
+
+/* SAFE DELETE — 2 clicks */
+.del-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:500}
+.del-modal{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px 28px;width:360px;max-width:94vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.12)}
+.del-icon{font-size:26px;color:var(--gray4);margin-bottom:12px}
+.del-title{font-family:var(--font-d);font-size:22px;font-weight:300;font-style:italic;margin-bottom:6px;color:var(--black)}
+.del-item{font-size:13px;color:var(--gray2);margin-bottom:18px;font-weight:300;padding:10px 14px;background:var(--gray6);border-radius:10px;border:1px solid var(--border);font-style:italic}
+.del-btns{display:flex;gap:10px}
+.del-cancel{flex:1;padding:11px;font-size:14px;font-family:var(--font-b);border:1px solid var(--border2);border-radius:12px;background:var(--white);color:var(--gray2);cursor:pointer;transition:all .15s}
+.del-cancel:hover{background:var(--gray6)}
+.del-confirm{flex:1;padding:11px;font-size:14px;font-family:var(--font-b);border:1px solid #f5c5c0;border-radius:12px;background:#fee;color:var(--no-txt);cursor:pointer;transition:all .2s;font-weight:600}
+.del-confirm:hover{background:#fdd;color:#7a2020}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--black);color:rgba(255,255,255,0.92);padding:11px 18px;font-size:13px;border-radius:14px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+.toast.show{opacity:1}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px}
+.empty i{font-size:28px;display:block;margin-bottom:12px;color:var(--gray4)}
+.empty p{font-size:14px;line-height:1.8;color:var(--gray3);font-weight:300}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:200;cursor:zoom-out}
+.lightbox img{max-width:88vw;max-height:88vh;border-radius:14px}
+
+/* TAREAS MINUTA */
+.tareas-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:400}
+.tareas-modal{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px 28px;width:460px;max-width:94vw;box-shadow:0 24px 60px rgba(0,0,0,0.12)}
+
+/* MOBILE */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(255,255,255,0.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));flex-direction:row}
+.mob-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;color:var(--gray3);transition:color .15s;font-size:10px;font-family:var(--font-b);border:none;background:transparent}
+.mob-nav-item.active{color:var(--gray2)}
+.mob-nav-item i{font-size:22px}
+.mob-proj-bar{display:none;background:var(--gray6);border-bottom:1px solid var(--border);padding:10px 16px;overflow-x:auto;white-space:nowrap;flex-shrink:0}
+.mob-proj-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--white);font-size:12px;font-family:var(--font-b);color:var(--gray2);cursor:pointer;margin-right:8px;transition:all .15s}
+.mob-proj-btn.active{background:var(--black);color:var(--white);border-color:var(--black)}
+.mob-proj-btn .dot{width:6px;height:6px;border-radius:50%}
+
+@media(max-width:768px){
+  .app{padding:0;gap:0;flex-direction:column;height:100dvh}
+  .sidebar{display:none}
+  .main{border-radius:0;box-shadow:none;border:none;padding-bottom:70px}
+  .p-banner{border-radius:0;padding:10px 16px}
+  .tabs{display:none}
+  .panel-body{padding:16px}
+  .ph-title{font-size:26px}
+  .inicio-cards{grid-template-columns:1fr 1fr}
+  .briefing-items{grid-template-columns:1fr}
+  .stat-cards{grid-template-columns:repeat(2,1fr)}
+  .datos-grid{grid-template-columns:1fr}
+  .mob-nav{display:flex}
+  .mob-proj-bar{display:block}
+  .toast{bottom:76px;right:14px;left:14px;text-align:center}
+}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="s-logo" style="padding:28px 24px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:flex-start;text-align:left">
+    <!-- OR Logo -->
+    <div style="padding:8px 0 18px 0">
+      <div id="logo-or" style="font-family:'Nunito',sans-serif;font-size:64px;font-weight:900;letter-spacing:-0.03em;line-height:1;display:inline-block;background-image:linear-gradient(135deg,#cc2200,#ffff00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">OR</div>
+      <div id="logo-sub" style="font-family:'Outfit',sans-serif;font-size:9px;font-weight:400;color:#aaaaaa;letter-spacing:0.3em;text-transform:uppercase;margin-top:5px;background:none;-webkit-text-fill-color:#aaaaaa">arquitectas</div>
+    </div>
+    <div class="s-profiles" style="width:100%;display:flex;gap:6px">
+      <button class="pbtn active-laiza" id="pbtn-laiza" onclick="switchProfile('laiza')" style="font-size:15px;font-weight:700;padding:12px 0">Laiza</button>
+      <button class="pbtn" id="pbtn-regina" onclick="switchProfile('regina')" style="font-size:15px;font-weight:700;padding:12px 0">Regina</button>
+    </div>
+  </div>
+
+  <div class="s-section" style="margin-top:4px">Navegar</div>
+  <div id="nav-main">
+    <div class="nav-item active" id="snav-inicio" onclick="switchTab('inicio',this)">
+      <span class="nav-name">Inicio</span>
+    </div>
+    <div class="nav-item" id="snav-recordatorios" onclick="switchTab('recordatorios',this)">
+      <span class="nav-name">Por hacer</span>
+    </div>
+    <div class="nav-item" id="snav-calendario" onclick="switchTab('calendario',this)">
+      <span class="nav-name">Calendario</span>
+    </div>
+    <div class="nav-item" id="snav-juntas" onclick="switchTab('juntas',this)">
+      <span class="nav-name">Juntas</span>
+    </div>
+    <div class="nav-item" id="snav-victorias" onclick="switchTab('victorias',this)">
+      <span class="nav-name">⭐</span>
+    </div>
+    <div class="nav-item" id="snav-intake" onclick="switchTab('intake',this)">
+      <span class="nav-name">Datos</span>
+    </div>
+    <div class="nav-item" id="snav-contactos" onclick="switchTab('contactos',this)">
+      <span class="nav-name">Contactos</span>
+    </div>
+    <div class="nav-item" id="snav-stats" onclick="switchTab('stats',this)">
+      <span class="nav-name">Stats</span>
+    </div>
+    <div class="nav-item" id="snav-productividad" onclick="switchTab('productividad',this)" style="display:none">
+      <span class="nav-name">Mi productividad</span>
+    </div>
+  </div>
+  <div class="s-section">Proyectos</div>
+
+  <div id="nav-proyectos">
+    <div class="nav-item active" onclick="selectProj('monti',this)" data-proj="monti">
+      <span class="nav-name">Monti</span>
+    </div>
+    <div class="proj-stage-wrap" id="stage-monti">
+      <div class="proj-stage-bar" id="stagebar-monti"></div>
+      <div class="stage-label" id="stagelabel-monti"></div>
+    </div>
+    <div class="nav-item" onclick="selectProj('skyline',this)" data-proj="skyline">
+      <span class="nav-name">Skyline</span>
+    </div>
+    <div class="proj-stage-wrap" id="stage-skyline">
+      <div class="proj-stage-bar" id="stagebar-skyline"></div>
+      <div class="stage-label" id="stagelabel-skyline"></div>
+    </div>
+    <div class="nav-item" onclick="selectProj('showroom',this)" data-proj="showroom">
+      <span class="nav-name">Showroom</span>
+    </div>
+    <div class="proj-stage-wrap" id="stage-showroom">
+      <div class="proj-stage-bar" id="stagebar-showroom"></div>
+      <div class="stage-label" id="stagelabel-showroom"></div>
+    </div>
+    <div class="nav-item" onclick="selectProj('moti',this)" data-proj="moti">
+      <span class="nav-name">Moti</span>
+    </div>
+    <div class="proj-stage-wrap" id="stage-moti">
+      <div class="proj-stage-bar" id="stagebar-moti"></div>
+      <div class="stage-label" id="stagelabel-moti"></div>
+    </div>
+    <div class="nav-item" onclick="selectProj('tlanepantla',this)" data-proj="tlanepantla">
+      <span class="nav-name">Tlanepantla</span>
+    </div>
+    <div class="proj-stage-wrap" id="stage-tlanepantla">
+      <div class="proj-stage-bar" id="stagebar-tlanepantla"></div>
+      <div class="stage-label" id="stagelabel-tlanepantla"></div>
+    </div>
+  </div>
+
+  <div class="s-bottom">
+    <button class="add-proj-btn" onclick="openModal('newproj')"><i class="ti ti-plus" style="font-size:15px"></i>Nuevo proyecto</button>
+    <div class="sync-row"><span class="sync-dot ok" id="sync-dot"></span><span class="sync-label" id="sync-label">Guardado</span></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- PROFILE BANNER -->
+  <div class="p-banner laiza" id="p-banner">
+    
+    <div><div class="p-name" id="p-name" style="font-size:22px;font-weight:900;letter-spacing:-0.02em">Laiza</div><div class="p-role" id="p-role">Arquitecta de interiores · OR</div></div>
+    <div class="p-date" id="p-date-el">
+      <div class="p-day" id="p-day"></div>
+      <div class="p-month" id="p-month"></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" id="tab-inicio" onclick="switchTab('inicio',this)">Inicio</div>
+    <div class="tab" id="tab-recordatorios" onclick="switchTab('recordatorios',this)">Por hacer</div>
+    <div class="tab" id="tab-calendario" onclick="switchTab('calendario',this)">Calendario</div>
+    <div class="tab" id="tab-juntas" onclick="switchTab('juntas',this)">Juntas</div>
+    <div class="tab" id="tab-victorias" onclick="switchTab('victorias',this)">⭐</div>
+    <div class="tab" id="tab-intake" onclick="switchTab('intake',this)">Datos</div>
+    <div class="tab" id="tab-stats" onclick="switchTab('stats',this)">Stats</div>
+    <div class="tab" id="tab-productividad" onclick="switchTab('productividad',this)" style="display:none">Mi productividad</div>
+  </div>
+
+  <!-- PROJECT COLOR BAR -->
+  <!-- INICIO -->
+  <div class="panel active" id="panel-inicio" style="overflow-y:auto">
+    <div class="inicio-hero" id="inicio-hero">
+      <div class="inicio-greeting" id="inicio-greeting" style="font-family:var(--font-b);font-size:56px;font-weight:900;font-style:normal;letter-spacing:-0.03em;line-height:0.95">Buenos días</div>
+      <div class="inicio-date" id="inicio-date-label"></div>
+      <div class="inicio-cards" id="inicio-cards">
+        <div class="inicio-card" onclick="switchTab('recordatorios',document.getElementById('snav-recordatorios'))" style="background:#111;border-color:#111">
+          <div class="inicio-card-icon" style="background:rgba(255,255,255,0.1)"><i class="ti ti-circle-check" style="color:white"></i></div>
+          <div class="inicio-card-title" style="color:white">Por hacer</div>
+          <div id="ic-tareas"></div>
+        </div>
+        <div class="inicio-card" onclick="switchTab('juntas',document.getElementById('snav-juntas'))" style="background:#333;border-color:#333">
+          <div class="inicio-card-icon" style="background:rgba(255,255,255,0.1)"><i class="ti ti-users" style="color:white"></i></div>
+          <div class="inicio-card-title" style="color:white">Última junta</div>
+          <div id="ic-junta"></div>
+        </div>
+        <div class="inicio-card" onclick="openModal('recordatorio')" style="background:var(--gray6);border-color:var(--border)">
+          <div class="inicio-card-icon" style="background:white;box-shadow:0 2px 8px rgba(0,0,0,0.08)"><i class="ti ti-plus" style="color:#111"></i></div>
+          <div class="inicio-card-title">Nueva tarea</div>
+          <div class="inicio-card-sub">Agregar pendiente</div>
+        </div>
+      </div>
+    </div>
+    <div class="inicio-briefing">
+      <div class="briefing-title"><i class="ti ti-sparkles" style="color:var(--gray2);font-size:14px"></i>Briefing del día</div>
+      <div class="briefing-items" id="briefing-items">
+        <div class="briefing-item"><div class="briefing-item-label">Cargando...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POR HACER -->
+  <div class="panel" id="panel-recordatorios"><div class="panel-body">
+    <div class="ph">
+      <div><div class="ph-eyebrow" id="rec-eye">Este proyecto</div><div class="ph-title">Por hacer</div></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="rec-filter">
+          <button class="rec-filter-btn active" id="rec-toggle-proj" onclick="setRecFilter('proyecto')">Este proyecto</button>
+          <button class="rec-filter-btn" id="rec-toggle-all" onclick="setRecFilter('todos')">Todos</button>
+        </div>
+        <button class="add-btn" onclick="openModal('recordatorio')"><i class="ti ti-plus"></i>Agregar</button>
+      </div>
+    </div>
+    <div id="rec-list"></div>
+  </div></div>
+
+  <!-- CALENDARIO -->
+  <div class="panel" id="panel-calendario"><div class="panel-body" style="max-width:100%">
+    <div class="ph"><div><div class="ph-eyebrow" id="cal-eye">Planificación</div><div class="ph-title">Calendario</div></div>
+    <button class="add-btn accent" onclick="planearSemana()"><i class="ti ti-sparkles"></i>Proponer con IA</button></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <button onclick="semShift(-1)" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray2)"><i class="ti ti-chevron-left" style="font-size:14px"></i></button>
+      <div class="cal-toggle">
+        <button class="cal-toggle-btn active" id="cal-semana" onclick="setCalView('semana',this)">Semana</button>
+        <button class="cal-toggle-btn" id="cal-mes" onclick="setCalView('mes',this)">Mes</button>
+        <button class="cal-toggle-btn" id="cal-anio" onclick="setCalView('anio',this)">Año</button>
+      </div>
+      <button onclick="semShift(1)" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray2)"><i class="ti ti-chevron-right" style="font-size:14px"></i></button>
+      <span id="sem-label" style="font-size:14px;color:var(--gray2)"></span>
+    </div>
+    <div id="sem-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:start"></div>
+    <div id="sem-ai-box" style="display:none;margin-top:16px" class="card">
+      <div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px"><i class="ti ti-sparkles" style="font-size:13px;color:var(--gray2)"></i>Propuesta de IA</div>
+      <div id="sem-ai-text" style="font-size:14px;color:var(--gray2);font-weight:300;line-height:1.7"></div>
+    </div>
+  </div></div>
+
+  <!-- JUNTAS + DECISIONES -->
+  <div class="panel" id="panel-juntas"><div class="panel-body">
+    <div class="ph">
+      <div><div class="ph-eyebrow" id="jun-eye">Monti</div><div class="ph-title">Juntas</div></div>
+      <button class="add-btn" onclick="openModal('junta')"><i class="ti ti-plus"></i>Nueva minuta</button>
+    </div>
+    <div id="jun-list"></div>
+  </div></div>
+
+  <!-- VICTORIAS -->
+  <div class="panel" id="panel-victorias"><div class="panel-body">
+    <div class="ph"><div><div class="ph-eyebrow" id="vic-eye">Laiza</div><div class="ph-title">⭐</div></div><button class="add-btn" onclick="openModal('victoria')"><i class="ti ti-plus"></i>Agregar</button></div>
+    <div id="vic-list"></div>
+  </div></div>
+
+  <!-- DATOS DEL PROYECTO -->
+  <div class="panel" id="panel-intake"><div class="panel-body" style="max-width:100%">
+    <div class="ph"><div><div class="ph-eyebrow" id="int-eye">Datos del proyecto</div><div class="ph-title" id="int-title">Monti</div></div></div>
+    <div class="datos-grid">
+      <div>
+        <div class="datos-col-title">Proyecto</div>
+        <div id="fixed-data-list"></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="datos-col-title" style="margin-bottom:0">Antes de empezar</div>
+          <button onclick="addAntesItem()" style="font-size:12px;color:var(--gray3);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px"><i class="ti ti-plus" style="font-size:14px"></i>Agregar</button>
+        </div>
+        <div id="prog-antes" class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div id="intake-list"></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- CONTACTOS -->
+  <div class="panel" id="panel-contactos"><div class="panel-body">
+    <div class="ph">
+      <div><div class="ph-title">Contactos</div></div>
+      <button class="add-btn" onclick="openModal('contacto')"><i class="ti ti-plus"></i>Agregar</button>
+    </div>
+    <div id="contactos-list"></div>
+  </div></div>
+
+  <!-- STATS -->
+  <div class="panel" id="panel-stats"><div class="panel-body" style="max-width:100%">
+    <div class="ph"><div><div class="ph-eyebrow">Análisis</div><div class="ph-title">Stats</div></div><button class="add-btn" onclick="refreshStats()"><i class="ti ti-refresh"></i>Actualizar</button></div>
+    <div id="stats-content"><div class="empty"><i class="ti ti-chart-bar"></i><p>Abre esta pestaña para ver tu análisis.</p></div></div>
+  </div></div>
+
+  <!-- MI PRODUCTIVIDAD -->
+  <div class="panel" id="panel-productividad"><div class="panel-body" style="max-width:100%">
+    <div class="ph"><div><div class="ph-eyebrow">Regina · OR Arquitectas</div><div class="ph-title">Mi productividad</div></div><button class="add-btn" onclick="refreshProductividad()"><i class="ti ti-refresh"></i>Actualizar</button></div>
+    <div id="prod-content"><div class="empty"><i class="ti ti-chart-line"></i><p>Abre esta pestaña para ver tu análisis.</p></div></div>
+  </div></div>
+</div>
+</div>
+
+<!-- MODALES -->
+<div class="overlay" id="overlay-junta" onclick="oc(event,'junta')">
+  <div class="modal"><div class="modal-eyebrow">Registro</div><div class="modal-title">Nueva junta</div><div class="modal-sub">Las tareas y decisiones se detectan automáticamente.</div>
+    <div class="form-row"><label class="form-label">¿Con quién?</label><input class="form-input" id="j-quien" placeholder="Escribe el nombre..."></div>
+    <div class="form-row"><label class="form-label">Fecha</label><input class="form-input" type="date" id="j-fecha"></div>
+    <div class="form-row"><label class="form-label">Notas</label><textarea class="form-textarea" id="j-notas" placeholder="¿De qué se habló? ¿Qué se decidió?" style="min-height:120px"></textarea></div>
+    <div class="form-row"><label class="form-label">Imágenes</label>
+      <div class="upload-zone" onclick="document.getElementById('j-img-input').click()"><i class="ti ti-photo-up"></i>Subir imagen</div>
+      <input type="file" id="j-img-input" accept="image/*" multiple style="display:none" onchange="addJuntaImgs(this)">
+      <div id="j-img-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Proyecto</label><select class="form-select" id="j-proj">
+      <option value="monti">Monti</option>
+      <option value="skyline">Skyline</option>
+      <option value="showroom">Showroom</option>
+      <option value="moti">Moti</option>
+      <option value="tlanepantla">Tlanepantla</option>
+      <option value="general">General</option>
+    </select></div>
+    <div class="form-btns"><button class="fbtn" onclick="cm('junta')">Cancelar</button><button class="fbtn primary" onclick="saveJunta()">Guardar</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-recordatorio" onclick="oc(event,'recordatorio')">
+  <div class="modal"><div class="modal-eyebrow">Nueva tarea</div><div class="modal-title">Por hacer</div><div class="modal-sub">Se convierte en victoria cuando la completas.</div>
+    <div class="form-row"><label class="form-label">¿Qué tienes que hacer?</label><textarea class="form-textarea" id="r-texto" placeholder="Ej: Mandar planos actualizados..."></textarea></div>
+    <div class="form-row"><label class="form-label">Prioridad</label><select class="form-select" id="r-prior"><option value="alta">Alta — urgente</option><option value="media" selected>Media — esta semana</option><option value="baja">Baja — cuando pueda</option></select></div>
+    <div class="form-row"><label class="form-label">Proyecto</label><select class="form-select" id="r-proj"><option value="monti">Monti</option><option value="skyline">Skyline</option><option value="showroom">Showroom</option><option value="moti">Moti</option><option value="tlanepantla">Tlanepantla</option><option value="general">General</option></select></div>
+    <div class="form-btns"><button class="fbtn" onclick="cm('recordatorio')">Cancelar</button><button class="fbtn primary" onclick="saveRecordatorio()">Guardar</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-victoria" onclick="oc(event,'victoria')">
+  <div class="modal"><div class="modal-eyebrow">Registro personal</div><div class="modal-title">Un logro de hoy</div><div class="modal-sub">No importa si se siente pequeño.</div>
+    <div class="form-row"><label class="form-label">¿Qué lograste?</label><textarea class="form-textarea" id="f-vic" placeholder="Ej: Fui a Pilates, resolví el checklist de Moti..."></textarea></div>
+    <div class="form-btns"><button class="fbtn" onclick="cm('victoria')">Cancelar</button><button class="fbtn primary" onclick="saveVictoria()">Guardar</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-newproj" onclick="oc(event,'newproj')">
+  <div class="modal"><div class="modal-eyebrow">Nuevo</div><div class="modal-title">Proyecto</div>
+    <div class="form-row"><label class="form-label">Nombre</label><input class="form-input" id="np-nombre" placeholder="Ej: Polanco, Casa García..."></div>
+    <div class="form-row"><label class="form-label">Ubicación</label><input class="form-input" id="np-ubicacion" placeholder="Ej: Colonia Polanco, Miguel Hidalgo"></div>
+    <div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="np-tipo"><option>Edificio de departamentos</option><option>Casa</option><option>Interiorismo</option><option>Fachada</option><option>Showroom</option><option>Otro</option></select></div>
+    <div class="form-row"><label class="form-label">Etapa inicial</label><select class="form-select" id="np-etapa"><option value="0">Prospecto</option><option value="1">Levantamiento</option><option value="2">Anteproyecto</option><option value="3">Proyecto ejecutivo</option><option value="4">Permisos y trámites</option><option value="5">Obra</option><option value="6">Supervisión</option><option value="7">Entrega</option></select></div>
+    <div class="form-row"><label class="form-label">Cliente</label><input class="form-input" id="np-cliente" placeholder="Nombre del cliente..."></div>
+    <div class="form-btns"><button class="fbtn" onclick="cm('newproj')">Cancelar</button><button class="fbtn primary" onclick="saveNewProj()">Crear proyecto</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-contacto" onclick="oc(event,'contacto')">
+  <div class="modal"><div class="modal-eyebrow">Nuevo</div><div class="modal-title">Contacto</div>
+    <div class="form-row"><label class="form-label">Nombre</label><input class="form-input" id="c-nombre" placeholder="Ej: Eduardo, Jacques..."></div>
+    <div class="form-row"><label class="form-label">Rol</label><input class="form-input" id="c-rol" placeholder="Ej: Contratista, Cliente, Socio..."></div>
+    <div class="form-btns"><button class="fbtn" onclick="cm('contacto')">Cancelar</button><button class="fbtn primary" onclick="saveContacto()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- TAREAS DE MINUTA -->
+<div class="tareas-overlay" id="tareas-overlay">
+  <div class="tareas-modal">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><i class="ti ti-sparkles" style="font-size:18px;color:var(--gray2)"></i><div style="font-family:var(--font-d);font-size:22px;font-weight:300;font-style:italic;color:var(--black)">Tareas detectadas</div></div>
+    <p style="font-size:13px;color:var(--gray3);margin-bottom:16px;font-weight:300;line-height:1.6">Selecciona las que quieres agregar a Por hacer.</p>
+    <div id="tareas-list"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="fbtn" onclick="document.getElementById('tareas-overlay').style.display='none'">Ignorar</button>
+      <button class="fbtn primary" onclick="agregarTareasSeleccionadas()">Agregar seleccionadas</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAFE DELETE -->
+<div class="del-overlay" id="del-overlay">
+  <div class="del-modal">
+    <div class="del-icon"><i class="ti ti-trash"></i></div>
+    <div class="del-title">¿Eliminar?</div>
+    <div class="del-item" id="del-item-text"></div>
+    <div class="del-btns">
+      <button class="del-cancel" onclick="closeDel()">Cancelar</button>
+      <button class="del-confirm" onclick="executeDel()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="this.style.display='none'"><img id="lb-img" src=""></div>
+<div class="toast" id="toast"></div>
+
+<!-- MOBILE NAV -->
+<nav class="mob-nav" id="mob-nav">
+  <button class="mob-nav-item active" id="mn-inicio" onclick="mobTab('inicio')"><i class="ti ti-home"></i>Inicio</button>
+  <button class="mob-nav-item" id="mn-recordatorios" onclick="mobTab('recordatorios')"><i class="ti ti-circle-check"></i>Por hacer</button>
+  <button class="mob-nav-item" id="mn-juntas" onclick="mobTab('juntas')"><i class="ti ti-users"></i>Juntas</button>
+  <button class="mob-nav-item" id="mn-victorias" onclick="mobTab('victorias')"><i class="ti ti-star"></i></button>
+  <button class="mob-nav-item" id="mn-mas" onclick="toggleMobMas()"><i class="ti ti-dots"></i>Más</button>
+</nav>
+<div class="mob-proj-bar" id="mob-proj-bar"></div>
+<div id="mob-mas-menu" style="display:none;position:fixed;bottom:70px;left:0;right:0;z-index:49;background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:8px 0">
+  <button onclick="mobTab('calendario');closeMobMas()" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 20px;background:none;border:none;color:var(--black);font-family:var(--font-b);font-size:15px;cursor:pointer;border-bottom:1px solid var(--border)"><i class="ti ti-calendar" style="font-size:20px;color:var(--gray3)"></i>Calendario</button>
+  <button onclick="mobTab('intake');closeMobMas()" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 20px;background:none;border:none;color:var(--black);font-family:var(--font-b);font-size:15px;cursor:pointer;border-bottom:1px solid var(--border)"><i class="ti ti-file-description" style="font-size:20px;color:var(--gray3)"></i>Datos del proyecto</button>
+  <button onclick="mobTab('stats');closeMobMas()" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 20px;background:none;border:none;color:var(--black);font-family:var(--font-b);font-size:15px;cursor:pointer;border-bottom:1px solid var(--border)"><i class="ti ti-chart-bar" style="font-size:20px;color:var(--gray3)"></i>Stats</button>
+  <div style="padding:10px 20px;display:flex;gap:10px">
+    <button onclick="switchProfile('laiza');closeMobMas()" style="flex:1;padding:10px;background:var(--gray5);border:1px solid rgba(181,98,42,0.3);border-radius:10px;color:var(--gray2);font-family:var(--font-b);font-size:13px;font-weight:600;cursor:pointer">Laiza</button>
+    <button onclick="switchProfile('regina');closeMobMas()" style="flex:1;padding:10px;background:var(--burg-light);border:1px solid rgba(139,42,74,0.3);border-radius:10px;color:var(--burg);font-family:var(--font-b);font-size:13px;font-weight:600;cursor:pointer">Regina</button>
+  </div>
+</div>
+
+<script>
+const GAS='https://script.google.com/macros/s/AKfycbw9MugiIOnnExApf8JmdOsmoeYEhx8Ga522-81NTUUz6Yez14SQ7zzIBLv4PMUsT7eBJA/exec';
+const API='https://api.anthropic.com/v1/messages';
+const FB='https://orarquitectas-default-rtdb.firebaseio.com';
+
+async function saveToSheet(profile,key,value){
+  try{
+    await fetch(FB+'/or/'+profile+'/'+key+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(value===undefined?null:value)});
+    ss('ok');
+  }catch(e){ss('err');}
+}
+async function loadFromSheet(profile,key){
+  try{
+    const r=await fetch(FB+'/or/'+profile+'/'+key+'.json',{cache:'no-store'});
+    if(!r.ok)return null;
+    const text=await r.text();
+    if(!text||text==='null')return null;
+    return JSON.parse(text);
+  }catch(e){return null;}
+}
+function saveAll(profile){
+  setTimeout(async()=>{
+    try{
+      const data=S.data[profile];
+      const toObj=(arr)=>Array.isArray(arr)?Object.fromEntries(arr.map((v,i)=>[i,v])):arr;
+      const saves=[['dec',data.dec],['jun',S.data.laiza.jun],['vic',toObj(data.vic)],['rec',toObj(data.rec)],['answers',data.answers||{}],['antes',sharedData.antes||{}],['projData',sharedData.projData||{}],['stages',data.stages||{}],['contactos',toObj(sharedData.contactos||[])]];
+      if(semPlan[profile])saves.push(['semPlan',semPlan[profile]]);
+      // Save shared data (only once, not per profile)
+      if(profile==='laiza'){
+        await saveToSheet('shared','contactos',toObj(sharedData.contactos||[]));
+        await saveToSheet('shared','jun',S.data.laiza.jun);
+        await saveToSheet('shared','projData',sharedData.projData||{});
+        await saveToSheet('shared','antes',sharedData.antes||{});
+      }
+      for(const[key,val]of saves)await saveToSheet(profile,key,val);
+      ss('ok');
+    }catch(e){ss('err');}
+  },0);
+}
+async function loadAll(profile){
+  ss('saving');
+  const toArr=(v)=>{if(!v)return[];if(Array.isArray(v))return v;if(typeof v==='object')return Object.values(v).filter(x=>x!==null&&x!==undefined);return[];};
+  const ensureProjs=(obj)=>{const r=(obj&&typeof obj==='object')?obj:{};['monti','skyline','showroom','moti','tlanepantla'].forEach(k=>{if(!r[k])r[k]=[];});return r;};
+  const [dec,jun,vic,rec,answers,antes,projData,sp,stages]=await Promise.all([
+    loadFromSheet(profile,'dec'),loadFromSheet(profile,'jun'),loadFromSheet(profile,'vic'),
+    loadFromSheet(profile,'rec'),loadFromSheet(profile,'answers'),loadFromSheet(profile,'antes'),
+    loadFromSheet(profile,'projData'),loadFromSheet(profile,'semPlan'),loadFromSheet(profile,'stages'),
+  ]);
+  if(dec&&typeof dec==='object')S.data[profile].dec=ensureProjs(dec);
+  if(jun&&typeof jun==='object'){S.data.laiza.jun=ensureProjs(jun);S.data.regina.jun=S.data.laiza.jun;}
+  S.data[profile].vic=toArr(vic);
+  S.data[profile].rec=toArr(rec);
+  if(answers&&typeof answers==='object')S.data[profile].answers=answers;
+  if(antes&&typeof antes==='object')sharedData.antes=antes;S.data.regina.antes=sharedData.antes;
+  if(projData&&typeof projData==='object'){sharedData.projData=projData;}
+  if(stages&&typeof stages==='object')S.data[profile].stages=stages;
+  sharedData.contactos=toArr(contactos);S.data.regina.contactos=sharedData.contactos;
+  if(sp&&typeof sp==='object'){if(!semPlan[profile])semPlan[profile]={};Object.assign(semPlan[profile],sp);}
+  ss('ok');
+}
+
+const STAGES=['Prospecto','Levantamiento','Anteproyecto','Proyecto ejecutivo','Permisos','Obra','Supervisión','Entrega'];
+const PROJS={
+  monti:{name:'Monti',loc:'Roma, Cuauhtémoc',tipo:'Edificio deptos',cliente:'Vita Desarrolladora',color:'#c47a1e',etapa:5,
+    cl:[{t:'Cuenta catastral'},{t:'Superficie de terreno (m²)'},{t:'Uso de suelo (SEDUVI)'},{t:'Niveles permitidos'},{t:'COS'},{t:'CUS'},{t:'Área libre mínima'},{t:'Cajones requeridos'},{t:'Número de elevadores'},{t:'Normativa confirmada'}]},
+  skyline:{name:'Skyline',loc:'Calzada Tlalpan, B. Juárez',tipo:'Edificio deptos',cliente:'Vita Desarrolladora',color:'#5a8aaa',etapa:4,
+    cl:[{t:'Niveles aprobados por gobierno'},{t:'Tipo de edificio definido'},{t:'Área libre confirmada'},{t:'Separación entre edificios'},{t:'Presupuesto por m²'}]},
+  showroom:{name:'Showroom',loc:'Calzada Tlalpan, B. Juárez',tipo:'Showroom',cliente:'Vita Desarrolladora',color:'#b5622a',etapa:2,
+    cl:[{t:'Programa de espacios definido'},{t:'M² totales'},{t:'Dirección de diseño aprobada'},{t:'Versiones rechazadas documentadas'}]},
+  moti:{name:'Moti',loc:'Moliere, Miguel Hidalgo',tipo:'Fachada',cliente:'Moti',color:'#7a9a7a',etapa:2,
+    cl:[{t:'Modelo base en Rhino'},{t:'Referencias de fachada'},{t:'Primera iteración en Veras'},{t:'Presentación al cliente'}]},
+  tlanepantla:{name:'Tlanepantla',loc:'Tlanepantla, Edo. de México',tipo:'Edificio deptos',cliente:'Vita Desarrolladora',color:'#9a9890',etapa:0,
+    cl:[{t:'M² por departamento'},{t:'Número de niveles'},{t:'Cajones por columna'},{t:'Normativa Edo. Mex.'},{t:'Topográfico del terreno'},{t:'Corrida financiera cerrada'}]}
+};
+const PROF={
+  laiza:{name:'Laiza',role:'Arquitecta de interiores · OR',av:'L',bannerCls:'laiza',ctx:`Eres la asistente de Laiza, arquitecta de interiores en OR Arquitectas. Sé breve, cálida y directa. Si dice "recuérdame" responde con [RECORDATORIO: tarea | prioridad: alta/media/baja | proyecto: monti/skyline/showroom/moti/tlanepantla/general]`},
+  regina:{name:'Regina',role:'Arquitecta · OR',av:'R',bannerCls:'regina',ctx:`Eres la asistente de Regina, arquitecta en OR Arquitectas. Sé breve y directa. Si dice "recuérdame" responde con [RECORDATORIO: tarea | prioridad: alta/media/baja | proyecto: monti/skyline/showroom/moti/tlanepantla/general]`}
+};
+
+let S={proj:'monti',profile:'laiza',tab:'inicio',busy:false,pendingImg:null,
+  data:{
+    laiza:{dec:{monti:[],skyline:[],showroom:[],moti:[],tlanepantla:[]},jun:{monti:[],skyline:[],showroom:[],moti:[],tlanepantla:[]},vic:[],rec:[],answers:{},antes:{},projData:{},stages:{},contactos:[]},
+    regina:{dec:{monti:[],skyline:[],showroom:[],moti:[],tlanepantla:[]},jun:{monti:[],skyline:[],showroom:[],moti:[],tlanepantla:[]},vic:[],rec:[],answers:{},antes:{},projData:{},stages:{},contactos:[]}
+  }
+};
+let semPlan={};
+let sharedData={contactos:[],projData:{},antes:{}};
+let recFilter='proyecto';
+let calView='semana';
+let semOffset=0;
+let pendingDel={fn:null,label:''};
+
+// UTILS
+function ss(s){document.getElementById('sync-dot').className='sync-dot '+s;document.getElementById('sync-label').textContent=s==='ok'?'Guardado':s==='saving'?'Guardando...':'Error de conexión';}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+function today(){const d=new Date();return`${d.getDate()} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]} ${d.getFullYear()}`;}
+function oc(e,t){if(e.target===e.currentTarget)cm(t);}
+function cm(t){document.getElementById(`overlay-${t}`).style.display='none';}
+function openModal(type){
+  document.getElementById(`overlay-${type}`).style.display='flex';
+  if(type==='junta'){document.getElementById('j-quien').value='';document.getElementById('j-notas').value='';document.getElementById('j-fecha').value=new Date().toISOString().split('T')[0];const jlink=document.getElementById('j-link');if(jlink)jlink.value='';const jprev=document.getElementById('j-img-preview');if(jprev)jprev.innerHTML='';juntaImgs=[];const jproj=document.getElementById('j-proj');if(jproj)jproj.value=S.proj;}
+  if(type==='recordatorio'){document.getElementById('r-texto').value='';document.getElementById('r-proj').value=S.proj;}
+  if(type==='victoria')document.getElementById('f-vic').value='';
+  if(type==='newproj'){['np-nombre','np-ubicacion','np-cliente'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
+}
+function lb(src){document.getElementById('lb-img').src=src;document.getElementById('lightbox').style.display='flex';}
+function prevImg(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{S.pendingImg=e.target.result;const p=document.getElementById('f-preview');if(p){p.src=e.target.result;p.style.display='block';}};r.readAsDataURL(f);}
+
+// DATE
+function updateDate(){
+  const d=new Date();
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('p-day').textContent=d.getDate();
+  document.getElementById('p-month').textContent=meses[d.getMonth()];
+  const hora=d.getHours();
+  const saludo=hora<12?'Buenos días':hora<18?'Buenas tardes':'Buenas noches';
+  const p=PROF[S.profile];
+  document.getElementById('inicio-greeting').innerHTML=
+    `<span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:60px;letter-spacing:-0.03em;display:block;line-height:1;color:#111">${saludo},</span>
+    <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:38px;letter-spacing:-0.02em;display:inline-block;line-height:1.1;background-image:${currentGrad};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:transparent">${p.name}.</span>`;
+  document.getElementById('inicio-date-label').textContent=`${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]}`;
+}
+
+// PROFILE
+function switchProfile(n){
+  S.profile=n;
+  const p=PROF[n];
+  document.getElementById('pbtn-laiza').className='pbtn'+(n==='laiza'?' active-laiza':'');
+  document.getElementById('pbtn-regina').className='pbtn'+(n==='regina'?' active-regina':'');
+  document.getElementById('p-banner').className='p-banner '+p.bannerCls;
+  const pNameEl=document.getElementById('p-name');if(pNameEl)pNameEl.textContent=p.name;
+  const pRoleEl=document.getElementById('p-role');if(pRoleEl)pRoleEl.textContent=p.role;
+  document.getElementById('vic-eye').textContent=p.name;
+  const prodTab=document.getElementById('tab-productividad');
+  if(prodTab)prodTab.style.display=n==='regina'?'block':'none';
+  const prodSnav=document.getElementById('snav-productividad');
+  if(prodSnav)prodSnav.style.display=n==='regina'?'flex':'none';
+  loadAll(n).then(()=>{renderCurrent();applyProjGradient(S.proj);});
+  updateDate();
+}
+
+// PROJECT
+function selectProj(k,el){
+  S.proj=k;
+  document.querySelectorAll('.nav-item').forEach(i=>{i.classList.remove('active');i.style.background='';i.style.borderLeft='2px solid transparent';});
+  if(el){
+    el.classList.add('active');
+    const grad=getProjGradient(k);
+    const cols=grad.match(/#[a-fA-F0-9]{6}/g)||['#cc2200','#ffff00'];
+    el.style.background=`linear-gradient(135deg,${cols[0]}22,${cols[1]}11)`;
+    el.style.borderLeft=`3px solid ${cols[0]}`;
+  }
+  const p=PROJS[k];
+  // Update project color bar
+  const bar=document.getElementById('proj-color-bar');
+  if(bar)bar.style.background=p.color;
+  applyProjGradient(k);
+  ['jun-eye'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=p.name;});
+  document.getElementById('int-eye').textContent=`${p.name} · ${p.loc}`;
+  document.getElementById('int-title').textContent=p.name;
+  renderStageBar(k);
+  renderCurrent();
+  initMobProjBar();
+}
+
+// STAGE BAR
+function renderStageBar(k){
+  const bar=document.getElementById('stagebar-'+k);
+  const label=document.getElementById('stagelabel-'+k);
+  if(!bar)return;
+  const stageIdx=S.data[S.profile].stages[k]!==undefined?S.data[S.profile].stages[k]:(PROJS[k].etapa||0);
+  bar.innerHTML=STAGES.map((s,i)=>`<div class="stage-dot${i<stageIdx?' done':i===stageIdx?' active':''}" title="${s}" onclick="setStage('${k}',${i})"></div>`).join('');
+  if(label)label.textContent=STAGES[stageIdx]||'';
+}
+function setStage(k,idx){
+  if(!S.data[S.profile].stages)S.data[S.profile].stages={};
+  S.data[S.profile].stages[k]=idx;
+  renderStageBar(k);saveAll(S.profile);toast(`${PROJS[k].name}: ${STAGES[idx]}`);
+}
+function renderAllStageBars(){Object.keys(PROJS).forEach(k=>renderStageBar(k));}
+
+// TABS
+function switchTab(tab,el){
+  S.tab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  if(el&&el.classList&&el.classList.contains('tab'))el.classList.add('active');
+  document.getElementById(`panel-${tab}`)?.classList.add('active');
+  // Update sidebar nav
+  document.querySelectorAll('#nav-main .nav-item').forEach(i=>{i.classList.remove('active');i.style.background='';i.style.borderLeft='2px solid transparent';});
+  const snavEl=document.getElementById('snav-'+tab);
+  if(snavEl){
+    snavEl.classList.add('active');
+    const cols=(currentGrad.match(/#[a-fA-F0-9]{6}/g)||['#cc2200','#ffff00']);
+    snavEl.style.background=`linear-gradient(135deg,${cols[0]}18,${cols[1]}0a)`;
+    snavEl.style.borderLeft=`2px solid ${cols[0]}`;
+  }
+  renderCurrent();
+}
+function renderCurrent(){
+  if(S.tab==='inicio')rInicio();
+  else if(S.tab==='recordatorios')rRec();
+  else if(S.tab==='calendario')rSemana();
+  else if(S.tab==='juntas')rJun();
+  else if(S.tab==='victorias')rVic();
+  else if(S.tab==='intake'){rFixedData();rIntake();}
+  else if(S.tab==='contactos')rContactos();
+  else if(S.tab==='productividad')refreshProductividad();
+}
+
+// INICIO
+function rInicio(){
+  updateDate();
+  // Cards rápidas
+  const tareas=S.data[S.profile].rec.filter(r=>!r.done);
+  const altaCount=tareas.filter(r=>r.p==='alta').length;
+  const card1=document.querySelector('#panel-inicio .inicio-card:first-child');
+  if(document.getElementById('ic-tareas'))
+    document.getElementById('ic-tareas').innerHTML=`<div style="font-size:48px;font-weight:900;line-height:1;color:white;margin:8px 0 4px">${tareas.length}</div><div style="font-size:12px;color:rgba(255,255,255,0.7)">${altaCount>0?`${altaCount} urgentes`:'sin urgentes'}</div>`;
+  const juntasTodas=Object.values(S.data[S.profile].jun).flat();
+  const ultima=juntasTodas[juntasTodas.length-1];
+  if(document.getElementById('ic-junta'))
+    document.getElementById('ic-junta').innerHTML=ultima?`<div style="font-size:13px;font-weight:600;color:white;margin:8px 0 2px">${ultima.q}</div><div style="font-size:11px;color:rgba(255,255,255,0.65)">${ultima.f}</div>`:`<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:8px">Sin juntas aún</div>`;
+  // Briefing con IA
+  rBriefing();
+}
+
+async function rBriefing(){
+  const cont=document.getElementById('briefing-items');
+  const tareas=S.data[S.profile].rec.filter(r=>!r.done).slice(0,5);
+  const juntasTodas=Object.values(S.data[S.profile].jun).flat();
+  const ultima=juntasTodas[juntasTodas.length-1];
+  if(!tareas.length&&!ultima){
+    cont.innerHTML=`<div class="briefing-item" style="grid-column:1/-1"><div class="briefing-empty">Sin pendientes registrados aún. Agrega tareas o registra una junta para ver tu briefing.</div></div>`;
+    return;
+  }
+  // Mostrar datos sin IA mientras carga
+  cont.innerHTML=`
+    <div class="briefing-item"><div class="briefing-item-label">Alta prioridad</div><div class="briefing-item-content">${tareas.filter(r=>r.p==='alta').map(r=>r.t).join(' · ')||'Nada urgente ✓'}</div></div>
+    <div class="briefing-item"><div class="briefing-item-label">Esta semana</div><div class="briefing-item-content">${tareas.filter(r=>r.p==='media').map(r=>r.t).slice(0,3).join(' · ')||'Sin pendientes medios'}</div></div>
+  `;
+  // Add overdue contact alert
+  const alertC=getContactosAlert();
+  if(alertC){
+    const dias=diasSin(alertC.ultimaVez);
+    const label=dias===null?'Nunca han hablado':'Llevas '+dias+' días sin hablar';
+    cont.innerHTML+=`<div class="briefing-item" style="border-left:3px solid #e05555;padding-left:12px"><div class="briefing-item-label" style="color:#e05555">Contacto pendiente</div><div class="briefing-item-content"><strong>${alertC.nombre}</strong> — ${label} <button onclick="palomitaContacto(${(sharedData.contactos||[]).indexOf(alertC)})" style="margin-left:8px;font-size:12px;background:var(--black);color:white;border:none;border-radius:6px;padding:3px 10px;cursor:pointer">✓ Hablaron hoy</button></div></div>`;
+  }
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,
+        messages:[{role:'user',content:`Eres la asistente de ${S.profile==='laiza'?'Laiza':'Regina'} en OR Arquitectas. Da un briefing del día en 2 frases muy cortas y directas. Tareas urgentes: ${JSON.stringify(tareas.filter(r=>r.p==='alta').map(r=>r.t))}. Última junta: ${ultima?`con ${ultima.q}, ${ultima.f}`:'ninguna'}. Sin mencionar nombres de personas específicas.`}]})});
+    const d=await r.json();
+    const txt=d.content?.[0]?.text||'';
+    if(txt)cont.innerHTML+=`<div class="briefing-item" style="grid-column:1/-1;background:var(--gray5);border-color:rgba(181,98,42,0.2)"><div class="briefing-item-label" style="color:var(--gray2)">✦ Nota del día</div><div class="briefing-item-content">${txt}</div></div>`;
+  }catch(e){}
+}
+
+// POR HACER
+function setRecFilter(f){
+  recFilter=f;
+  const bp=document.getElementById('rec-toggle-proj'),ba=document.getElementById('rec-toggle-all');
+  if(bp)bp.className='rec-filter-btn'+(f==='proyecto'?' active':'');
+  if(ba)ba.className='rec-filter-btn'+(f==='todos'?' active':'');
+  rRec();
+}
+const PRIO_ORDER={alta:0,media:1,baja:2};
+function editRec(i){
+  const r=S.data[S.profile].rec[i];
+  const opts=Object.entries(PROJS).map(([k,p])=>`<option value="${k}"${r.proj===k?' selected':''}>${p.name}</option>`).join('')+`<option value="general"${r.proj==='general'?' selected':''}>General</option>`;
+  const modal=document.createElement('div');modal.className='overlay';modal.style.display='flex';modal.id='overlay-edit-rec';
+  modal.innerHTML=`<div class="modal"><div class="modal-eyebrow">Editar tarea</div>
+    <div class="form-row"><label class="form-label">Tarea</label><textarea class="form-textarea" id="edit-rec-texto">${r.t}</textarea></div>
+    <div class="form-row"><label class="form-label">Prioridad</label><select class="form-select" id="edit-rec-prior">
+      <option value="alta"${r.p==='alta'?' selected':''}>Alta — urgente</option>
+      <option value="media"${r.p==='media'?' selected':''}>Media — esta semana</option>
+      <option value="baja"${r.p==='baja'?' selected':''}>Baja — cuando pueda</option>
+    </select></div>
+    <div class="form-row"><label class="form-label">Proyecto</label><select class="form-select" id="edit-rec-proj">${opts}</select></div>
+    <div class="form-btns"><button class="fbtn" onclick="document.getElementById('overlay-edit-rec').remove()">Cancelar</button><button class="fbtn primary" onclick="saveEditRec(${i})">Guardar</button></div>
+  </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+}
+function saveEditRec(i){
+  const t=document.getElementById('edit-rec-texto').value.trim();if(!t)return;
+  S.data[S.profile].rec[i].t=t;
+  S.data[S.profile].rec[i].p=document.getElementById('edit-rec-prior').value;
+  S.data[S.profile].rec[i].proj=document.getElementById('edit-rec-proj').value;
+  document.getElementById('overlay-edit-rec').remove();
+  rRec();saveAll(S.profile);toast('Tarea actualizada ✓');
+}
+function rRec(){
+  const list=document.getElementById('rec-list');if(!list)return;
+  const all=S.data[S.profile].rec||[];
+  const filtered=recFilter==='proyecto'?all.filter(r=>r.proj===S.proj||r.proj==='general'):all;
+  const eye=document.getElementById('rec-eye');
+  if(eye)eye.textContent=recFilter==='proyecto'?PROJS[S.proj]?.name||S.proj:'Todos los proyectos';
+  const act=filtered.filter(r=>!r.done).sort((a,b)=>(PRIO_ORDER[a.p]||2)-(PRIO_ORDER[b.p]||2));
+  const done=filtered.filter(r=>r.done);
+  if(!filtered.length){list.innerHTML=`<div class="empty"><i class="ti ti-circle-check"></i><p>Sin tareas${recFilter==='proyecto'?' en este proyecto':' pendientes'}.</p></div>`;return;}
+  let h=act.map(r=>{
+    const idx=all.indexOf(r);
+    const projGrad=getProjGradient(r.proj)||'linear-gradient(135deg,#999,#ccc)';
+    const prioColor=r.p==='alta'?'#e05555':r.p==='media'?'#ff8c00':'#aaaaaa';
+    const prioBg=r.p==='alta'?'rgba(224,85,85,0.06)':r.p==='media'?'rgba(255,140,0,0.06)':'transparent';
+    const prioLabel=r.p==='alta'?'URGENTE':r.p==='media'?'ESTA SEMANA':'CUANDO PUEDA';
+    return `<div style="padding:14px 0 14px 14px;border-bottom:1px solid var(--border);border-left:4px solid ${prioColor};background:${prioBg};border-radius:0 10px 10px 0;margin-bottom:4px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:9px;font-weight:800;letter-spacing:0.1em;color:${prioColor}">${prioLabel}</span>
+        <span style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background-image:${projGrad};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${PROJS[r.proj]?.name||r.proj}</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="font-size:15px;color:var(--black);flex:1;line-height:1.5">${r.t}</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+          <i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:16px;transition:color .15s" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="editRec(${idx})" title="Editar"></i>
+          <i class="ti ti-check r-done" onclick="doneRec(${idx})" title="Completar"></i>
+          <i class="ti ti-trash r-del" onclick="deleteRec(${idx})"></i>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  if(done.length)h+=`<div style="font-size:10px;color:var(--gray3);letter-spacing:0.12em;text-transform:uppercase;margin:20px 0 10px;padding-top:14px;border-top:1px solid var(--border)">Completadas</div>`+done.map(r=>{const idx=all.indexOf(r);return`<div style="padding:10px 0;border-bottom:1px solid var(--border);opacity:0.4;display:flex;align-items:center;gap:12px"><div style="flex:1;text-decoration:line-through;font-size:14px;color:var(--gray3)">${r.t}</div><i class="ti ti-trash r-del" onclick="deleteRec(${idx})"></i></div>`;}).join('');
+  list.innerHTML=h;
+}
+function doneRec(i){
+  const r=S.data[S.profile].rec[i];
+  S.data[S.profile].rec[i].done=true;
+  S.data[S.profile].vic.unshift({t:`✓ ${r.t}`,d:'Ahora',_origen:{t:r.t,p:r.p,proj:r.proj}});
+  saveAll(S.profile);rRec();toast('¡Tarea completada! Agregada a ⭐');
+}
+function restaurarVic(i){
+  const v=S.data[S.profile].vic[i];
+  if(!v._origen){toast('No se puede restaurar esta victoria');return;}
+  S.data[S.profile].rec.unshift({t:v._origen.t,p:v._origen.p||'media',proj:v._origen.proj||S.proj,done:false});
+  S.data[S.profile].vic.splice(i,1);
+  saveAll(S.profile);rVic();toast('Tarea devuelta a Por hacer ✓');
+}
+function editVic(i){
+  const v=S.data[S.profile].vic[i];
+  const modal=document.createElement('div');modal.className='overlay';modal.style.display='flex';modal.id='overlay-edit-vic';
+  modal.innerHTML=`<div class="modal"><div class="modal-eyebrow">Editar logro</div>
+    <div class="form-row"><label class="form-label">Logro</label><textarea class="form-textarea" id="edit-vic-texto">${v.t.replace(/^✓ /,'')}</textarea></div>
+    <div class="form-btns"><button class="fbtn" onclick="document.getElementById('overlay-edit-vic').remove()">Cancelar</button><button class="fbtn primary" onclick="saveEditVic(${i})">Guardar</button></div>
+  </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+}
+function saveEditVic(i){
+  const t=document.getElementById('edit-vic-texto').value.trim();if(!t)return;
+  S.data[S.profile].vic[i].t=t;
+  document.getElementById('overlay-edit-vic').remove();
+  rVic();saveAll(S.profile);toast('Logro actualizado ✓');
+}
+function editJun(i){
+  const j=S.data[S.profile].jun[S.proj][i];
+  const modal=document.createElement('div');modal.className='overlay';modal.style.display='flex';modal.id='overlay-edit-jun';
+  modal.innerHTML=`<div class="modal"><div class="modal-eyebrow">Editar junta</div>
+    <div class="form-row"><label class="form-label">¿Con quién?</label><input class="form-input" id="edit-jun-quien" value="${j.q}"></div>
+    <div class="form-row"><label class="form-label">Notas</label><textarea class="form-textarea" id="edit-jun-notas" style="min-height:120px">${j.n}</textarea></div>
+    <div class="form-btns"><button class="fbtn" onclick="document.getElementById('overlay-edit-jun').remove()">Cancelar</button><button class="fbtn primary" onclick="saveEditJun(${i})">Guardar</button></div>
+  </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+}
+function saveEditJun(i){
+  const q=document.getElementById('edit-jun-quien').value.trim();
+  const n=document.getElementById('edit-jun-notas').value.trim();
+  if(!q||!n)return;
+  S.data[S.profile].jun[S.proj][i].q=q;
+  S.data[S.profile].jun[S.proj][i].n=n;
+  document.getElementById('overlay-edit-jun').remove();
+  rJun();saveAll(S.profile);toast('Junta actualizada ✓');
+}
+function editDec(i){
+  const d=S.data[S.profile].dec[S.proj][i];
+  const modal=document.createElement('div');modal.className='overlay';modal.style.display='flex';modal.id='overlay-edit-dec';
+  modal.innerHTML=`<div class="modal"><div class="modal-eyebrow">Editar decisión</div>
+    <div class="form-row"><label class="form-label">¿Qué se decidió?</label><textarea class="form-textarea" id="edit-dec-texto">${d.t}</textarea></div>
+    <div class="form-row"><label class="form-label">Estado</label><select class="form-select" id="edit-dec-estado">
+      <option value="aprobado"${d.e==='aprobado'?' selected':''}>Aprobado ✓</option>
+      <option value="rechazado"${d.e==='rechazado'?' selected':''}>Rechazado ✗</option>
+      <option value="pendiente"${d.e==='pendiente'?' selected':''}>Pendiente</option>
+    </select></div>
+    <div class="form-btns"><button class="fbtn" onclick="document.getElementById('overlay-edit-dec').remove()">Cancelar</button><button class="fbtn primary" onclick="saveEditDec(${i})">Guardar</button></div>
+  </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+}
+function saveEditDec(i){
+  const t=document.getElementById('edit-dec-texto').value.trim();if(!t)return;
+  S.data[S.profile].dec[S.proj][i].t=t;
+  S.data[S.profile].dec[S.proj][i].e=document.getElementById('edit-dec-estado').value;
+  document.getElementById('overlay-edit-dec').remove();
+  rJun();saveAll(S.profile);toast('Decisión actualizada ✓');
+}
+function rVic(){
+  const list=document.getElementById('vic-list'),items=S.data[S.profile].vic;
+  if(!items.length){list.innerHTML='<div class="empty"><i class="ti ti-star"></i><p>Sin logros aún.<br>Agrega el primero del día.</p></div>';return;}
+  list.innerHTML=items.map((v,i)=>`<div class="victory">
+    <div class="v-star"><i class="ti ti-star-filled"></i></div>
+    <div style="flex:1"><div class="v-text">${v.t}</div><div class="v-date">${v.d}</div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+      ${v._origen?`<button onclick="restaurarVic(${i})" style="font-size:11px;color:var(--gray3);background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;white-space:nowrap">↩ Por hacer</button>`:''}
+      <i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:16px" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="editVic(${i})"></i>
+      <i class="ti ti-trash r-del" onclick="deleteVic(${i})"></i>
+    </div>
+  </div>`).join('');
+}
+
+// JUNTAS + DECISIONES
+function rJun(){
+  const list=document.getElementById('jun-list');if(!list)return;
+  // Collect ALL juntas and decisions from ALL projects
+  const allJuntas=[];
+  Object.entries(S.data[S.profile].jun).forEach(([proj,items])=>{
+    (items||[]).forEach((j,i)=>allJuntas.push({...j,_proj:proj,_idx:i}));
+  });
+  const allDecs=[];
+  Object.entries(S.data[S.profile].dec).forEach(([proj,items])=>{
+    (items||[]).forEach((d,i)=>allDecs.push({...d,_proj:proj,_idx:i}));
+  });
+  // Sort juntas by date descending
+  const parseDate=f=>{if(!f)return 0;const p=f.split(' ');const m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'].indexOf(p[1]);return m>=0?new Date(parseInt(p[2]),m,parseInt(p[0])).getTime():0;};
+  allJuntas.sort((a,b)=>parseDate(b.f)-parseDate(a.f));
+  if(!allJuntas.length&&!allDecs.length){list.innerHTML='<div class="empty"><i class="ti ti-users"></i><p>Sin juntas ni decisiones registradas.</p></div>';return;}
+  let h='';
+  // Decisions
+  if(allDecs.length){
+    h+=`<div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;font-weight:600">Decisiones</div>`;
+    h+=allDecs.map(d=>{
+      const grad=getProjGradient(d._proj)||'linear-gradient(135deg,#999,#ccc)';
+      return `<div class="card card-accent" style="margin-bottom:8px"><div style="display:flex;align-items:flex-start;gap:12px"><div style="flex:1">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background-image:${grad};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px">${PROJS[d._proj]?.name||d._proj}</div>
+        <div class="card-body">${d.t}</div>
+        <div class="card-meta"><span class="badge ${d.e}">${d.e}</span><span>${d.f}</span>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:15px" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="S.proj='${d._proj}';editDec(${d._idx})"></i>
+            <i class="ti ti-trash r-del" onclick="S.proj='${d._proj}';deleteDec(${d._idx})"></i>
+          </div>
+        </div>
+      </div>${d.img?`<img class="img-thumb" src="${d.img}" onclick="lb('${d.img}')">`:`<div class="img-placeholder" onclick="S.proj='${d._proj}';attachImg(${d._idx})"><i class="ti ti-photo-plus"></i></div>`}</div></div>`;
+    }).join('');
+    h+=`<button class="add-btn" style="margin-bottom:20px;margin-top:4px" onclick="openDecModal()"><i class="ti ti-plus"></i>Registrar decisión</button>`;
+  } else {
+    h+=`<button class="add-btn" style="margin-bottom:20px" onclick="openDecModal()"><i class="ti ti-plus"></i>Registrar decisión</button>`;
+  }
+  // Juntas
+  if(allJuntas.length){
+    h+=`<div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;font-weight:600">Juntas</div>`;
+    h+=allJuntas.map(j=>{
+      const grad=getProjGradient(j._proj)||'linear-gradient(135deg,#999,#ccc)';
+      const imgsHtml=j.imgs&&j.imgs.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">'+j.imgs.map(src=>`<img src="${src}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;cursor:pointer" onclick="lb('${src}')">`).join('')+'</div>':'';
+      const tareasHtml=j.tareas&&j.tareas.length?`<div class="junta-tareas"><div class="junta-tareas-title">Tareas detectadas</div>${j.tareas.map(t=>`<div class="junta-dec-item"><i class="ti ti-circle-check" style="color:var(--gray3);font-size:14px"></i>${t}</div>`).join('')}</div>`:'';
+      return `<div class="junta-card">
+        <div class="junta-hdr">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background-image:${grad};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:3px">${PROJS[j._proj]?.name||j._proj}</div>
+            <div class="junta-who">${j.q}</div>
+            <div class="junta-date">${j.f}</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <i class="ti ti-edit" style="color:#ccc;cursor:pointer;font-size:16px" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#ccc'" onclick="S.proj='${j._proj}';editJun(${j._idx})"></i>
+            <i class="ti ti-trash r-del" onclick="S.proj='${j._proj}';deleteJun(${j._idx})"></i>
+          </div>
+        </div>
+        <div class="junta-notes">${j.n.replace(/\n/g,'<br>')}</div>
+        ${imgsHtml}${tareasHtml}
+      </div>`;
+    }).join('');
+  }
+  list.innerHTML=h;
+}
+
+// DECISION MODAL (dentro de juntas)
+function openDecModal(){
+  const modal=document.createElement('div');
+  modal.className='overlay';modal.style.display='flex';modal.id='overlay-dec-quick';
+  modal.innerHTML=`<div class="modal"><div class="modal-eyebrow">Registro</div><div class="modal-title">Decisión</div>
+    <div class="form-row"><label class="form-label">¿Qué se decidió?</label><textarea class="form-textarea" id="dq-texto" placeholder="Describe la decisión..." style="min-height:80px"></textarea></div>
+    <div class="form-row"><label class="form-label">Estado</label><select class="form-select" id="dq-estado"><option value="aprobado">Aprobado ✓</option><option value="rechazado">Rechazado ✗</option><option value="pendiente">Pendiente</option></select></div>
+    <div class="form-row"><label class="form-label">Imagen (opcional)</label><div class="upload-zone" onclick="document.getElementById('dq-img-input').click()"><i class="ti ti-photo-up"></i>Subir imagen</div><input type="file" id="dq-img-input" accept="image/*" style="display:none" onchange="prevDecQuick(this)"><img id="dq-preview" class="preview-img"></div>
+    <div class="form-btns"><button class="fbtn" onclick="document.getElementById('overlay-dec-quick').remove()">Cancelar</button><button class="fbtn primary" onclick="saveDecQuick()">Guardar</button></div>
+  </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+}
+function prevDecQuick(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{S.pendingImg=e.target.result;const p=document.getElementById('dq-preview');if(p){p.src=e.target.result;p.style.display='block';}};r.readAsDataURL(f);}
+function saveDecQuick(){
+  const t=document.getElementById('dq-texto')?.value.trim();if(!t)return;
+  const d={t,e:document.getElementById('dq-estado')?.value||'pendiente',f:today(),img:S.pendingImg||null};
+  if(!S.data[S.profile].dec[S.proj])S.data[S.profile].dec[S.proj]=[];
+  S.data[S.profile].dec[S.proj].push(d);S.pendingImg=null;
+  document.getElementById('overlay-dec-quick')?.remove();
+  rJun();toast('Decisión guardada ✓');saveAll(S.profile);
+}
+function attachImg(i){const inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{S.data[S.profile].dec[S.proj][i].img=ev.target.result;rJun();saveAll(S.profile);toast('Imagen adjuntada ✓');};r.readAsDataURL(f);};inp.click();}
+
+// DATOS DEL PROYECTO
+function rFixedData(){
+  const list=document.getElementById('fixed-data-list');if(!list)return;
+  const p=PROJS[S.proj];
+  if(!sharedData.projData)sharedData.projData={};
+  if(!sharedData.projData[S.proj])sharedData.projData[S.proj]={nombre:p.name,ubicacion:p.loc,tipo:p.tipo,cliente:p.cliente};
+  const pd=sharedData.projData[S.proj];
+  const etapaIdx=S.data[S.profile].stages?.[S.proj]!==undefined?S.data[S.profile].stages[S.proj]:p.etapa;
+  const campos=[['Nombre','nombre',pd.nombre],['Ubicación','ubicacion',pd.ubicacion],['Tipo','tipo',pd.tipo],['Cliente','cliente',pd.cliente]];
+  list.innerHTML=campos.map(([label,key,val])=>`<div class="datos-field"><div class="datos-label">${label}</div><input class="datos-input" value="${val||''}" placeholder="—" onfocus="this.style.borderBottomColor='var(--gray2)'" onblur="this.style.borderBottomColor='transparent';saveFixedData('${key}',this.value)"></div>`).join('')+
+  `<div class="datos-field"><div class="datos-label">Etapa</div><select class="datos-select" onchange="setStageFromDatos(this.value)">${STAGES.map((s,i)=>`<option value="${i}"${i===etapaIdx?' selected':''}>${s}</option>`).join('')}</select></div>`;
+}
+function saveFixedData(field,val){
+  if(!sharedData.projData)sharedData.projData={};
+  if(!sharedData.projData[S.proj])sharedData.projData[S.proj]={};
+  sharedData.projData[S.proj][field]=val;
+  saveAll(S.profile);toast('Guardado ✓');
+}
+function setStageFromDatos(idx){setStage(S.proj,parseInt(idx));}
+
+function rIntake(){
+  const list=document.getElementById('intake-list');if(!list)return;
+  if(!sharedData.antes)sharedData.antes={};
+  if(!sharedData.antes[S.proj])sharedData.antes[S.proj]={items:PROJS[S.proj].cl.map(c=>({t:c.t,val:'',done:false}))};
+  const antes=sharedData.antes[S.proj];
+  if(!antes.items)antes.items=PROJS[S.proj].cl.map(c=>({t:c.t,val:'',done:false}));
+  const done=antes.items.filter(x=>x.done).length;
+  const pct=antes.items.length>0?Math.round(done/antes.items.length*100):0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  list.innerHTML=antes.items.map((item,i)=>`<div class="antes-item"><div class="antes-item-top"><div class="antes-check${item.done?' done':''}" onclick="toggleAntes(${i})">${item.done?'<i class="ti ti-check"></i>':''}</div><input class="antes-name-input${item.done?' done':''}" value="${item.t}" placeholder="Dato a confirmar..." onchange="saveAntesName(${i},this.value)"></div><input class="antes-val-input" value="${item.val||''}" placeholder="Escribe el dato aquí..." onchange="saveAntesVal(${i},this.value)"></div>`).join('')+
+  `<button onclick="addAntesItem()" style="font-size:12px;color:var(--gray3);background:none;border:1.5px dashed var(--border2);border-radius:8px;padding:8px 14px;cursor:pointer;width:100%;margin-top:8px;transition:all .15s" onmouseover="this.style.borderColor='var(--gray2)';this.style.color='var(--gray2)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--gray3)'"><i class="ti ti-plus"></i> Agregar campo</button>`;
+}
+function toggleAntes(i){sharedData.antes[S.proj].items[i].done=!sharedData.antes[S.proj].items[i].done;rIntake();saveAll(S.profile);}
+function saveAntesName(i,val){sharedData.antes[S.proj].items[i].t=val;saveAll(S.profile);}
+function saveAntesVal(i,val){sharedData.antes[S.proj].items[i].val=val;if(val.trim())sharedData.antes[S.proj].items[i].done=true;rIntake();saveAll(S.profile);}
+function addAntesItem(){
+  if(!sharedData.antes[S.proj])sharedData.antes[S.proj]={items:[]};
+  sharedData.antes[S.proj].items.push({t:'',val:'',done:false});
+  rIntake();saveAll(S.profile);
+}
+
+// SAFE DELETE — 2 clics
+function safeDelete(label,fn){pendingDel={fn,label};document.getElementById('del-item-text').textContent=label;document.getElementById('del-overlay').style.display='flex';}
+function closeDel(){document.getElementById('del-overlay').style.display='none';pendingDel={fn:null,label:''};}
+function executeDel(){if(pendingDel.fn){pendingDel.fn();closeDel();toast('Eliminado');}}
+function deleteVic(i){safeDelete(S.data[S.profile].vic[i].t,()=>{S.data[S.profile].vic.splice(i,1);rVic();saveAll(S.profile);});}
+function deleteRec(i){safeDelete(S.data[S.profile].rec[i].t,()=>{S.data[S.profile].rec.splice(i,1);rRec();saveAll(S.profile);});}
+function deleteDec(i){safeDelete(S.data[S.profile].dec[S.proj][i].t,()=>{S.data[S.profile].dec[S.proj].splice(i,1);rJun();saveAll(S.profile);});}
+function deleteJun(i){safeDelete(`Junta con ${S.data[S.profile].jun[S.proj][i].q}`,()=>{S.data[S.profile].jun[S.proj].splice(i,1);rJun();saveAll(S.profile);});}
+
+// SAVE FUNCTIONS
+let juntaImgs=[];
+function addJuntaImgs(input){
+  Array.from(input.files).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      juntaImgs.push(e.target.result);
+      const prev=document.getElementById('j-img-preview');
+      if(prev){
+        const img=document.createElement('img');
+        img.src=e.target.result;img.style.cssText='width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer';
+        img.onclick=()=>lb(e.target.result);
+        prev.appendChild(img);
+      }
+    };r.readAsDataURL(f);
+  });
+}
+function saveJunta(){
+  const q=document.getElementById('j-quien').value.trim(),n=document.getElementById('j-notas').value.trim();if(!q||!n)return;
+  const[y,m,d]=document.getElementById('j-fecha').value.split('-');
+  const f=`${parseInt(d)} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][parseInt(m)-1]} ${y}`;
+  const projSel=document.getElementById('j-proj')?.value||S.proj;
+  const imgs=[...juntaImgs];
+  juntaImgs=[];
+  const prev=document.getElementById('j-img-preview');if(prev)prev.innerHTML='';
+  if(!S.data[S.profile].jun[projSel])S.data[S.profile].jun[projSel]=[];
+  S.data[S.profile].jun[projSel].push({q,f,n,imgs});
+  cm('junta');rJun();toast('Minuta guardada ✓');
+  saveAll(S.profile);
+  extraerTareasDeMinuta(n,q,f,imgs,projSel);
+}
+function saveRecordatorio(){
+  const t=document.getElementById('r-texto').value.trim();if(!t)return;
+  const r={t,p:document.getElementById('r-prior').value,proj:document.getElementById('r-proj').value,done:false};
+  S.data[S.profile].rec.unshift(r);
+  cm('recordatorio');rRec();toast('Tarea agregada ✓');saveAll(S.profile);
+}
+function saveContacto(){
+  const n=document.getElementById('c-nombre').value.trim();if(!n)return;
+  const r=document.getElementById('c-rol').value.trim();
+  const c={nombre:n,rol:r,ultimaVez:null};
+  if(!sharedData.contactos)sharedData.contactos=[];
+  sharedData.contactos.push(c);
+  cm('contacto');rContactos();toast('Contacto agregado ✓');saveAll(S.profile);
+}
+function palomitaContacto(i){
+  const hoy=today();
+  sharedData.contactos[i].ultimaVez=hoy;
+  markContactReminderDone();
+  rContactos();saveAll(S.profile);toast('✓ Registrado — hoy hablaron');
+}
+function deleteContacto(i){
+  safeDelete(sharedData.contactos[i].nombre,()=>{
+    sharedData.contactos.splice(i,1);rContactos();saveAll(S.profile);
+  });
+}
+function diasSin(fecha){
+  if(!fecha)return null;
+  const parts=fecha.split(' ');if(parts.length<3)return null;
+  const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const m=meses.indexOf(parts[1]);if(m<0)return null;
+  const d=new Date(parseInt(parts[2]),m,parseInt(parts[0]));
+  const diff=Math.floor((new Date()-d)/(1000*60*60*24));
+  return diff;
+}
+function rContactos(){
+  const list=document.getElementById('contactos-list');if(!list)return;
+  const contactos=sharedData.contactos||[];
+  if(!contactos.length){
+    list.innerHTML='<div class="empty"><i class="ti ti-users"></i><p>Sin contactos aún.<br>Agrega a las personas con las que hablas seguido.</p></div>';
+    return;
+  }
+  // Sort by days since last contact (most overdue first)
+  const sorted=[...contactos].map((c,i)=>({...c,_idx:i,_dias:diasSin(c.ultimaVez)}))
+    .sort((a,b)=>{
+      if(a._dias===null&&b._dias===null)return 0;
+      if(a._dias===null)return -1;
+      if(b._dias===null)return 1;
+      return b._dias-a._dias;
+    });
+  list.innerHTML=sorted.map(c=>{
+    const dias=c._dias;
+    const sinLabel=dias===null?'Nunca han hablado':dias===0?'Hoy':dias===1?'Ayer':'Hace '+dias+' días';
+    const urgente=dias===null||dias>14;
+    const color=dias===null?'#e05555':dias>14?'#e05555':dias>7?'#ff8c00':'#999';
+    const fw=urgente?'700':'400';
+    const ultimaDiv=c.ultimaVez?'<div style="font-size:11px;color:var(--gray3);margin-top:2px">'+c.ultimaVez+'</div>':'';
+    return '<div style="display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)">'+
+      '<div style="flex:1">'+
+        '<div style="font-size:16px;font-weight:600;color:var(--black)">'+c.nombre+'</div>'+
+        '<div style="font-size:12px;color:var(--gray3);margin-top:2px">'+(c.rol||'—')+'</div>'+
+      '</div>'+
+      '<div style="text-align:right;flex-shrink:0">'+
+        '<div style="font-size:13px;font-weight:'+fw+';color:'+color+'">'+sinLabel+'</div>'+
+        ultimaDiv+
+      '</div>'+
+      '<button onclick="palomitaContacto('+c._idx+')" style="width:40px;height:40px;border-radius:50%;border:2px solid '+color+';background:transparent;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0" title="Marcar que hablaron hoy">✓</button>'+
+      '<i class="ti ti-trash r-del" onclick="deleteContacto('+c._idx+')" style="flex-shrink:0"></i>'+
+    '</div>';
+  }).join('');
+}
+
+// Update rInicio to show overdue contacts
+function getContactosAlert(){
+  const contactos=sharedData.contactos||[];
+  const overdue=contactos.filter(c=>{const d=diasSin(c.ultimaVez);return d===null||d>7;});
+  return overdue.length?overdue[0]:null;
+}
+
+function saveVictoria(){
+  const t=document.getElementById('f-vic').value.trim();if(!t)return;
+  S.data[S.profile].vic.unshift({t,d:'Ahora'});
+  cm('victoria');rVic();toast('Logro guardado ✦');saveAll(S.profile);
+}
+function saveNewProj(){
+  const nombre=document.getElementById('np-nombre').value.trim();if(!nombre)return;
+  const ubicacion=document.getElementById('np-ubicacion').value.trim();
+  const tipo=document.getElementById('np-tipo').value;
+  const etapaIdx=parseInt(document.getElementById('np-etapa').value);
+  const cliente=document.getElementById('np-cliente').value.trim();
+  const key=nombre.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const colores=['#c47a1e','#5a8aaa','#b5622a','#7a9a7a','#9a7890','#6a8a9a'];
+  const color=colores[Object.keys(PROJS).length%colores.length];
+  // Assign gradient to new project
+  const projKeys2=Object.keys(PROJS);
+  const newGradIdx=projKeys2.length%EXTRA_GRADIENTS.length;
+  PROJ_GRADIENTS[key]=EXTRA_GRADIENTS[newGradIdx];
+  PROJS[key]={name:nombre,loc:ubicacion||'—',tipo,cliente:cliente||'—',color,etapa:etapaIdx,cl:[{t:'Cuenta catastral'},{t:'Superficie (m²)'},{t:'Uso de suelo'},{t:'Normativa confirmada'}]};
+  ['laiza','regina'].forEach(prof=>{
+    S.data[prof].dec[key]=[];S.data[prof].jun[key]=[];
+    if(!S.data[prof].answers)S.data[prof].answers={};S.data[prof].answers[key]={};
+    if(!S.data[prof].antes)S.data[prof].antes={};S.data[prof].antes[key]={items:PROJS[key].cl.map(c=>({t:c.t,val:'',done:false}))};
+  });
+  // Add to nav
+  const navContainer=document.getElementById('nav-proyectos');
+  const navDiv=document.createElement('div');
+  navDiv.className='nav-item';navDiv.setAttribute('onclick',`selectProj('${key}',this)`);navDiv.setAttribute('data-proj',key);
+  navDiv.innerHTML=`<span class="nav-name">${nombre}</span>`;
+  const stageWrap=document.createElement('div');stageWrap.className='proj-stage-wrap';stageWrap.id=`stage-${key}`;
+  stageWrap.innerHTML=`<div class="proj-stage-bar" id="stagebar-${key}"></div><div class="stage-label" id="stagelabel-${key}"></div>`;
+  navContainer.appendChild(navDiv);navContainer.appendChild(stageWrap);
+  // Add to recordatorio select
+  const sel=document.getElementById('r-proj');if(sel){const opt=document.createElement('option');opt.value=key;opt.textContent=nombre;sel.appendChild(opt);}
+  cm('newproj');selectProj(key,navDiv);toast(`Proyecto ${nombre} creado ✓`);saveAll('laiza');saveAll('regina');
+}
+
+// JUNTAS IA
+async function extraerTareasDeMinuta(notas,quien,fecha,imgs,proj){
+  const projTarget=proj||S.proj;
+  try{
+    const content=[];
+    if(imgs&&imgs.length){
+      imgs.forEach(src=>{
+        const base64=src.split(',')[1];
+        const mtype=src.match(/data:([^;]+)/)?.[1]||'image/jpeg';
+        content.push({type:'image',source:{type:'base64',media_type:mtype,data:base64}});
+      });
+    }
+    content.push({type:'text',text:`Analiza esta minuta${imgs&&imgs.length?' y las imágenes adjuntas':''}. Responde SOLO JSON: {"tareas":[{"texto":"tarea concisa","prioridad":"alta|media|baja"}],"decisiones":[{"texto":"decisión","estado":"aprobado|rechazado|pendiente"}]}. Arrays vacíos si no hay.\n\nJunta con ${quien} (${fecha}):\n${notas}`});
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,
+        messages:[{role:'user',content}]})});
+    const data=await r.json();
+    const raw=data.content?.[0]?.text||'{}';
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    if(parsed.decisiones?.length){
+      if(!S.data[S.profile].dec[projTarget])S.data[S.profile].dec[projTarget]=[];
+      parsed.decisiones.forEach(d=>{S.data[S.profile].dec[projTarget].push({t:d.texto,e:d.estado,f:today(),img:null});});
+      saveAll(S.profile);
+    }
+    if(parsed.tareas?.length)mostrarTareasExtraidas(parsed.tareas);
+    else rJun();
+  }catch(e){rJun();}
+}
+function mostrarTareasExtraidas(tareas){
+  const overlay=document.getElementById('tareas-overlay');
+  document.getElementById('tareas-list').innerHTML=tareas.map((t,i)=>`<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><input type="checkbox" id="tarea-${i}" checked style="margin-top:4px;width:16px;height:16px;accent-color:var(--gray2);cursor:pointer;flex-shrink:0"><div><label for="tarea-${i}" style="font-size:14px;color:var(--black);font-weight:300;cursor:pointer;line-height:1.5;display:block">${t.texto}</label><span style="font-size:11px;color:var(--gray3);text-transform:uppercase;letter-spacing:0.08em">${t.prioridad}</span></div></div>`).join('');
+  overlay._tareas=tareas;overlay.style.display='flex';
+}
+function agregarTareasSeleccionadas(){
+  const overlay=document.getElementById('tareas-overlay');
+  const tareas=overlay._tareas||[];let n=0;
+  tareas.forEach((t,i)=>{const cb=document.getElementById(`tarea-${i}`);if(cb?.checked){S.data[S.profile].rec.unshift({t:t.texto,p:t.prioridad,proj:S.proj,done:false});n++;}});
+  overlay.style.display='none';if(n>0){saveAll(S.profile);toast(`${n} tarea${n>1?'s':''} agregada${n>1?'s':''} ✓`);}
+  rJun();
+}
+
+// CALENDARIO
+const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const MESES_SHORT=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function getWeekStart(offset){const d=new Date();d.setDate(d.getDate()-d.getDay()+offset*7);d.setHours(0,0,0,0);return d;}
+function fmtDate(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function semShift(n){semOffset+=n;rSemana();}
+function setCalView(v,el){calView=v;document.querySelectorAll('.cal-toggle-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');rSemana();}
+
+function rSemana(){
+  const grid=document.getElementById('sem-grid');const label=document.getElementById('sem-label');if(!grid)return;
+  if(!semPlan[S.profile])semPlan[S.profile]={};
+  const week=getWeekStart(semOffset);
+  const weekEnd=new Date(week);weekEnd.setDate(weekEnd.getDate()+6);
+  label.textContent=`${week.getDate()} ${MESES_SHORT[week.getMonth()]} — ${weekEnd.getDate()} ${MESES_SHORT[weekEnd.getMonth()]} ${weekEnd.getFullYear()}`;
+  const today=fmtDate(new Date());
+  const tareas=S.data[S.profile].rec.filter(r=>!r.done);
+  const juntas=Object.entries(S.data[S.profile].jun).flatMap(([proj,arr])=>arr.map(j=>({...j,proj,projName:PROJS[proj]?.name||proj})));
+  grid.innerHTML='';
+  for(let i=0;i<7;i++){
+    const day=new Date(week);day.setDate(day.getDate()+i);
+    const key=fmtDate(day);const isToday=key===today;
+    const dayPlan=semPlan[S.profile][key]||[];
+    const dayJuntas=juntas.filter(j=>{
+      const parts=j.f.split(' ');if(parts.length<3)return false;
+      const mn=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'].indexOf(parts[1]);
+      return mn>=0&&fmtDate(new Date(parseInt(parts[2]),mn,parseInt(parts[0])))===key;
+    });
+    const col=document.createElement('div');col.className='day-col'+(isToday?' today':'');
+    col.innerHTML=`<div class="day-header">${DIAS[day.getDay()]}</div><div class="day-num">${day.getDate()}</div>${dayJuntas.map(j=>`<div class="sem-junta">${j.q}<div style="font-size:10px;color:var(--gray2);opacity:0.7">${j.projName}</div></div>`).join('')}<div class="day-drop" id="drop-${key}" ondragover="dragOver(event,this)" ondragleave="this.classList.remove('over')" ondrop="dropTask(event,'${key}')">${dayPlan.map(idx=>{const t=tareas[idx];if(!t)return'';return`<div class="sem-task ${t.p}" draggable="true" ondragstart="dragStart(event,${idx},'${key}')">${t.t}<div class="proj-name">${PROJS[t.proj]?.name||t.proj}</div></div>`;}).join('')}</div>`;
+    grid.appendChild(col);
+  }
+}
+let dragSrcIdx=null,dragSrcDay=null;
+function dragStart(e,idx,day){dragSrcIdx=idx;dragSrcDay=day;e.dataTransfer.effectAllowed='move';}
+function dragOver(e,el){e.preventDefault();e.dataTransfer.dropEffect='move';el.classList.add('over');}
+function dropTask(e,targetDay){
+  e.preventDefault();document.querySelectorAll('.day-drop').forEach(d=>d.classList.remove('over'));
+  if(dragSrcIdx===null)return;
+  if(!semPlan[S.profile])semPlan[S.profile]={};
+  if(dragSrcDay&&semPlan[S.profile][dragSrcDay])semPlan[S.profile][dragSrcDay]=semPlan[S.profile][dragSrcDay].filter(i=>i!==dragSrcIdx);
+  if(!semPlan[S.profile][targetDay])semPlan[S.profile][targetDay]=[];
+  if(!semPlan[S.profile][targetDay].includes(dragSrcIdx))semPlan[S.profile][targetDay].push(dragSrcIdx);
+  dragSrcIdx=null;dragSrcDay=null;saveAll(S.profile);rSemana();
+}
+async function planearSemana(){
+  const btn=document.querySelector('#panel-calendario .add-btn.accent');
+  if(btn)btn.innerHTML='<i class="ti ti-loader" style="animation:spin 1s linear infinite"></i>Pensando...';
+  const tareas=S.data[S.profile].rec.filter(r=>!r.done);
+  const week=getWeekStart(semOffset);
+  const days=Array.from({length:7},(_,i)=>{const d=new Date(week);d.setDate(d.getDate()+i);return{key:fmtDate(d),label:`${DIAS[d.getDay()]} ${d.getDate()}`};});
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:`Distribuye tareas en días de semana. Responde SOLO JSON: {"plan":{"YYYY-MM-DD":[0,1]},"razon":"2 oraciones"}. Max 2-3 tareas por día, lunes-viernes primero.`,messages:[{role:'user',content:`Tareas: ${JSON.stringify(tareas.map((t,i)=>({idx:i,tarea:t.t,prioridad:t.p})))}\nDías: ${JSON.stringify(days)}`}]})});
+    const d=await r.json();
+    const parsed=JSON.parse((d.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+    if(parsed.plan){if(!semPlan[S.profile])semPlan[S.profile]={};Object.assign(semPlan[S.profile],parsed.plan);saveAll(S.profile);}
+    if(parsed.razon){document.getElementById('sem-ai-box').style.display='block';document.getElementById('sem-ai-text').textContent=parsed.razon;}
+    rSemana();toast('Semana planificada ✓');
+  }catch(e){toast('Error al conectar con IA');}
+  if(btn)btn.innerHTML='<i class="ti ti-sparkles"></i>Proponer con IA';
+}
+
+// STATS
+function drawDonut(canvasId,val,total,color){
+  const canvas=document.getElementById(canvasId);if(!canvas)return;
+  const ctx=canvas.getContext('2d');const cx=canvas.width/2,cy=canvas.height/2,r=cx-8;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='#f4f4f4';ctx.lineWidth=10;ctx.stroke();
+  if(total>0){const angle=(val/total)*Math.PI*2;ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+angle);ctx.strokeStyle=color;ctx.lineWidth=10;ctx.lineCap='round';ctx.stroke();}
+  ctx.fillStyle='#111';ctx.font='bold 18px Outfit';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(total>0?Math.round(val/total*100)+'%':'—',cx,cy);
+}
+async function refreshStats(){
+  const cont=document.getElementById('stats-content');cont.innerHTML='<div class="empty"><i class="ti ti-chart-bar"></i><p>Calculando...</p></div>';
+  const data=S.data[S.profile];const projNames=Object.keys(PROJS);
+  let totalDec=0,totalApp=0,totalRej=0,totalTasks=0,totalDone=0;const byProj={};
+  projNames.forEach(k=>{
+    const dec=data.dec[k]||[],rec=data.rec.filter(r=>r.proj===k),done=rec.filter(r=>r.done).length;
+    byProj[k]={name:PROJS[k].name,color:PROJS[k].color,dec:dec.length,app:dec.filter(d=>d.e==='aprobado').length,rej:dec.filter(d=>d.e==='rechazado').length,tasks:rec.length,done};
+    totalDec+=dec.length;totalApp+=byProj[k].app;totalRej+=byProj[k].rej;totalTasks+=rec.length;totalDone+=done;
+  });
+  const vic=data.vic.length;
+  cont.innerHTML=`
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-icon" style="color:var(--gray2)">📋</div><div class="stat-num">${totalDec}</div><div class="stat-label">Decisiones</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--ok-txt)">✓</div><div class="stat-num">${totalApp}</div><div class="stat-label">Aprobadas</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--no-txt)">✗</div><div class="stat-num">${totalRej}</div><div class="stat-label">Rechazadas</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:#f5a623">⭐</div><div class="stat-num">${vic}</div><div class="stat-label">Logros</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="card"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px">Aprobadas vs total</div><div class="donut-wrap"><canvas id="donut1" width="90" height="90"></canvas><div style="font-size:13px;color:var(--gray2);font-weight:300;line-height:1.8">${totalApp} aprobadas<br>${totalRej} rechazadas<br>${totalDec-totalApp-totalRej} pendientes</div></div></div>
+      <div class="card"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px">Tareas completadas</div><div class="donut-wrap"><canvas id="donut2" width="90" height="90"></canvas><div style="font-size:13px;color:var(--gray2);font-weight:300;line-height:1.8">${totalDone} hechas<br>${totalTasks-totalDone} pendientes</div></div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:16px">Por proyecto</div>
+      ${projNames.map(k=>{const s=byProj[k];const w=totalDec>0?Math.round(s.dec/totalDec*100):0;return`<div style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div style="width:24px;height:4px;border-radius:2px;background:${getProjGradient(k)}"></div><span style="font-size:14px;font-weight:500;flex:1">${s.name}</span><span style="font-size:12px;color:var(--gray3)">${s.dec} decisiones · ${s.done}/${s.tasks} tareas</span></div><div class="prog-bar"><div style="height:100%;border-radius:1px;background:${getProjGradient(k)};width:${w}%;transition:width .4s"></div></div></div>`;}).join('')}
+    </div>
+    <div class="card" id="ai-stats"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px"><i class="ti ti-sparkles" style="font-size:13px;color:var(--gray2)"></i>Análisis de IA</div><div style="font-size:14px;color:var(--gray2);font-weight:300;line-height:1.7">Generando...</div></div>`;
+  setTimeout(()=>{drawDonut('donut1',totalApp,totalDec,'#7ab870');drawDonut('donut2',totalDone,totalTasks,'var(--gray2)');},100);
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Analiza brevemente en 2-3 oraciones en español los datos de ${S.profile==='laiza'?'Laiza':'Regina'} en OR Arquitectas. ${totalDec} decisiones (${totalApp} aprobadas, ${totalRej} rechazadas), ${totalDone}/${totalTasks} tareas completadas, ${vic} logros. Proyectos: ${JSON.stringify(Object.values(byProj).map(p=>({nombre:p.name,decisiones:p.dec,tareas:p.tasks})))}. Sin mencionar nombres de personas.`}]})});
+    const d=await r.json();
+    document.querySelector('#ai-stats div:last-child').innerHTML=(d.content?.[0]?.text||'Sin datos suficientes.').replace(/\n/g,'<br>');
+  }catch(e){document.querySelector('#ai-stats div:last-child').textContent='Error al conectar.';}
+}
+
+// PRODUCTIVIDAD REGINA
+async function refreshProductividad(){
+  const cont=document.getElementById('prod-content');cont.innerHTML='<div class="empty"><i class="ti ti-chart-line"></i><p>Calculando...</p></div>';
+  const data=S.data.regina;const projNames=Object.keys(PROJS);
+  const totalJuntas=projNames.reduce((a,k)=>a+(data.jun[k]?.length||0),0);
+  const totalTareas=data.rec.length,tareasHechas=data.rec.filter(r=>r.done).length,tareasPend=data.rec.filter(r=>!r.done).length;
+  const tasa=totalTareas>0?Math.round(tareasHechas/totalTareas*100):0;
+  const porProy=projNames.map(k=>({name:PROJS[k].name,color:PROJS[k].color,juntas:data.jun[k]?.length||0,tareas:data.rec.filter(r=>r.proj===k).length,hechas:data.rec.filter(r=>r.proj===k&&r.done).length})).filter(p=>p.juntas>0||p.tareas>0);
+  cont.innerHTML=`
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-num">${totalJuntas}</div><div class="stat-label">Juntas doc.</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--ok-txt)">✓</div><div class="stat-num">${tareasHechas}</div><div class="stat-label">Completadas</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--gray2)">%</div><div class="stat-num">${tasa}%</div><div class="stat-label">Cierre</div></div>
+      <div class="stat-card"><div class="stat-icon" style="color:var(--no-txt)">!</div><div class="stat-num">${tareasPend}</div><div class="stat-label">Pendientes</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="card"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px">Tasa de cierre</div><div class="donut-wrap"><canvas id="donut-reg" width="90" height="90"></canvas><div style="font-size:13px;color:var(--gray2);font-weight:300;line-height:1.8">${tareasHechas} completadas<br>${tareasPend} pendientes</div></div></div>
+      <div class="card"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px">Urgentes</div>${data.rec.filter(r=>!r.done&&r.p==='alta').slice(0,4).map(r=>`<div style="font-size:13px;color:var(--black);font-weight:300;padding:5px 0;border-bottom:1px solid var(--border)">${r.t}</div>`).join('')||'<div style="font-size:13px;color:var(--gray3);font-style:italic">Sin urgentes ✓</div>'}</div>
+    </div>
+    ${porProy.length?`<div class="card" style="margin-bottom:14px"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px">Por proyecto</div>${porProy.map(p=>`<div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px"><div style="width:20px;height:3px;border-radius:2px;background:${getProjGradient(p.key||k)}"></div><span style="flex:1;font-weight:500">${p.name}</span><span style="color:var(--gray3)">${p.juntas} juntas</span><span style="color:var(--ok-txt)">✓ ${p.hechas}/${p.tareas}</span></div>`).join('')}</div>`:''}
+    <div class="card" id="ai-prod"><div style="font-size:10px;color:var(--gray3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px"><i class="ti ti-sparkles" style="font-size:13px;color:var(--gray2)"></i>Análisis de IA</div><div style="font-size:14px;color:var(--gray2);font-weight:300;line-height:1.7">Generando...</div></div>`;
+  setTimeout(()=>drawDonut('donut-reg',tareasHechas,totalTareas,'#8b2a4a'),100);
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Analiza la productividad de Regina en OR Arquitectas en 2-3 oraciones. ${totalJuntas} juntas documentadas, ${tasa}% tasa de cierre, ${tareasPend} pendientes. Da una recomendación concreta para esta semana.`}]})});
+    const d=await r.json();document.querySelector('#ai-prod div:last-child').innerHTML=(d.content?.[0]?.text||'Sin datos.').replace(/\n/g,'<br>');
+  }catch(e){}
+}
+
+// MOBILE
+function mobTab(tab){
+  closeMobMas();
+  switchTab(tab,document.getElementById('tab-'+tab));
+  document.querySelectorAll('.mob-nav-item').forEach(el=>el.classList.remove('active'));
+  const mn=document.getElementById('mn-'+tab);if(mn)mn.classList.add('active');
+}
+function toggleMobMas(){const m=document.getElementById('mob-mas-menu');m.style.display=m.style.display==='none'?'block':'none';}
+function closeMobMas(){document.getElementById('mob-mas-menu').style.display='none';}
+function initMobProjBar(){
+  const bar=document.getElementById('mob-proj-bar');if(!bar)return;
+  bar.innerHTML=Object.entries(PROJS).map(([k,p])=>`<button class="mob-proj-btn${S.proj===k?' active':''}" onclick="mobSelectProj('${k}')"><span class="dot" style="background:${p.color}"></span>${p.name}</button>`).join('');
+}
+function mobSelectProj(k){
+  const el=document.querySelector(`[data-proj="${k}"]`);
+  selectProj(k,el);initMobProjBar();
+}
+
+
+// GRADIENTES POR HORA
+let currentGrad='linear-gradient(135deg,#cc2200,#ffff00)';
+function setGradVar(g){document.documentElement.style.setProperty('--grad-current',g);}
+
+// Gradiente por proyecto
+const PROJ_GRADIENTS={
+  monti:      'linear-gradient(135deg,#cc2200,#ffff00)',
+  skyline:    'linear-gradient(135deg,#000055,#ff00ff)',
+  showroom:   'linear-gradient(135deg,#990000,#ffaa00)',
+  moti:       'linear-gradient(135deg,#330066,#ff0055)',
+  tlanepantla:'linear-gradient(135deg,#003388,#00ffaa)',
+  _extra0:    'linear-gradient(135deg,#cc0055,#ff3388)',
+  _extra1:    'linear-gradient(135deg,#00aa44,#ffe000)',
+  _extra2:    'linear-gradient(135deg,#ff6600,#9900cc)',
+  _extra3:    'linear-gradient(135deg,#0099cc,#0055cc)',
+  _extra4:    'linear-gradient(135deg,#cc00cc,#ff0066)',
+};
+const EXTRA_GRADIENTS=[
+  'linear-gradient(135deg,#004400,#aaff00)',
+  'linear-gradient(135deg,#880000,#ffff00)',
+  'linear-gradient(135deg,#000066,#ff6600)',
+  'linear-gradient(135deg,#006600,#ff00aa)',
+  'linear-gradient(135deg,#440000,#00ffff)',
+  'linear-gradient(135deg,#220044,#ffaa00)',
+  'linear-gradient(135deg,#003300,#ff0066)',
+];
+function getProjGradient(k){
+  if(PROJ_GRADIENTS[k])return PROJ_GRADIENTS[k];
+  const keys=Object.keys(PROJS);
+  const idx=keys.indexOf(k);
+  return EXTRA_GRADIENTS[idx%EXTRA_GRADIENTS.length]||EXTRA_GRADIENTS[0];
+}
+
+function ensureProjs2(obj){const r=(obj&&typeof obj==='object')?obj:{};['monti','skyline','showroom','moti','tlanepantla'].forEach(k=>{if(!r[k])r[k]=[];});return r;}
+function getGradients(){return null;}
+const GRADIENTS=[];
+function darkenColor(hex,factor){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return '#'+[r,g,b].map(v=>Math.round(v*factor).toString(16).padStart(2,'0')).join('');
+}
+function applyProjGradient(proj){
+  const p=proj||S.proj;
+  currentGrad=(typeof getProjGradient==='function'?getProjGradient(p):null)||PROJ_GRADIENTS[p]||'linear-gradient(135deg,#cc2200,#ffff00)';
+  // Update active nav item
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    if(el.classList.contains('active')){
+      const colors3=currentGrad.match(/#[a-fA-F0-9]{6}/g)||['#cc2200','#ffff00'];
+      el.style.background=`linear-gradient(135deg,${colors3[0]}22,${colors3[1]}11)`;
+      el.style.borderLeft=`2px solid ${colors3[0]}`;
+    } else {
+      el.style.background='';
+      el.style.borderLeft='2px solid transparent';
+    }
+  });
+  const banner=document.getElementById('p-banner');
+  if(banner){
+    const colors2=currentGrad.match(/#[a-fA-F0-9]{6}/g)||['#cc2200','#ffff00'];
+    banner.style.background=`linear-gradient(135deg,${colors2[0]}18 0%,${colors2[1]}08 60%,white 100%)`;
+  }
+
+  // Update SVG radial gradient — dark center to color to lighter edge
+  const grad=document.getElementById('proj-grad');
+  if(grad){
+    const colors=currentGrad.match(/#[a-fA-F0-9]{6}/g)||['#cc2200','#ffff00'];
+    // Darken first color for center depth
+    const stops=grad.querySelectorAll('stop');
+    if(stops[0])stops[0].setAttribute('stop-color',colors[1]); // bright center
+    if(stops[1])stops[1].setAttribute('stop-color',colors[0]); // mid
+    if(stops[2])stops[2].setAttribute('stop-color',darkenColor(colors[0],0.5)); // dark edge
+  }
+  
+  const logo=document.getElementById('logo-or');
+  if(logo){logo.style.backgroundImage=currentGrad;}
+  setGradVar(currentGrad);
+  document.querySelectorAll('.grad-accent').forEach(el=>el.style.background=currentGrad);
+  document.querySelectorAll('.add-btn.accent').forEach(el=>el.style.backgroundImage=currentGrad);
+  document.querySelectorAll('.prog-fill').forEach(el=>el.style.background=currentGrad);
+  const colors=currentGrad.match(/#[a-fA-F0-9]{6}/g)||['#c47a1e','#e8a870'];
+  const c1=colors[0]+'18', c2=colors[1]+'0a';
+  document.documentElement.style.setProperty('--body-grad',`linear-gradient(135deg,${c1} 0%,${c2} 50%,rgba(255,255,255,0) 100%)`);
+  updateDate();
+}
+applyProjGradient(S.proj);
+
+// INIT
+updateDate();
+renderAllStageBars();
+initMobProjBar();
+setRecFilter('proyecto');
+
+// Daily contact reminder from 12pm onwards, once per day
+function checkContactReminder(){
+  const now=new Date();
+  const h=now.getHours();
+  if(h<12)return;
+  const hoy=now.toISOString().split('T')[0];
+  const lastShown=localStorage.getItem('or-contact-reminder-'+S.profile);
+  if(lastShown===hoy)return;
+  const contactos=sharedData.contactos||[];
+  if(contactos.length===0)return;
+  localStorage.setItem('or-contact-reminder-'+S.profile,hoy);
+  toast('¿Con quién hablaste hoy? Revisa tus contactos 👥');
+  const snavC=document.getElementById('snav-contactos');
+  if(snavC)snavC.style.fontWeight='900';
+}
+function markContactReminderDone(){
+  const hoy=new Date().toISOString().split('T')[0];
+  localStorage.setItem('or-contact-reminder-'+S.profile,hoy);
+}
+setInterval(checkContactReminder,60000);
+
+// Load data
+(async()=>{
+  ss('saving');
+  document.getElementById('sync-label').textContent='Cargando datos...';
+  await loadAll('laiza');
+  await loadAll('regina');
+  // Load shared data
+  const [sharedContactos,sharedProjData,sharedAntes,sharedJun]=await Promise.all([
+    loadFromSheet('shared','contactos'),
+    loadFromSheet('shared','projData'),
+    loadFromSheet('shared','antes'),
+    loadFromSheet('shared','jun'),
+  ]);
+  const toArrS=(v)=>{if(!v)return[];if(Array.isArray(v))return v;if(typeof v==='object')return Object.values(v).filter(x=>x!==null&&x!==undefined);return[];};
+  sharedData.contactos=toArrS(sharedContactos);
+  if(sharedJun&&typeof sharedJun==='object'){const j=ensureProjs2(sharedJun);S.data.laiza.jun=j;S.data.regina.jun=j;}
+  if(sharedProjData&&typeof sharedProjData==='object')sharedData.projData=sharedProjData;
+  if(sharedAntes&&typeof sharedAntes==='object')sharedData.antes=sharedAntes;
+  ss('ok');
+  applyProjGradient(S.proj);
+  renderCurrent();
+  rInicio();
+})();
+</script>
+</body>
+</html>
